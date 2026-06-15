@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import axios from "axios"
 import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
@@ -6,6 +7,32 @@ import { IoEyeOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 
 function Register() {
+
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response=await axios.post(
+                "http://localhost:3000/api/auth/register",formData
+            );
+            localStorage.setItem("token", response.data.token);
+
+            console.log(response.data)
+        } catch (err) {
+            console.log(err.response?.data);
+        }
+    }
     return (
         <div>
             {/* Logo */}
@@ -112,7 +139,7 @@ function Register() {
                             Fill in the details below to create your account
                         </p>
 
-                        <form className="mt-10 space-y-6">
+                        <form onSubmit={handleSubmit} className="mt-10 space-y-6">
 
                             {/* Full Name */}
                             <div>
@@ -122,6 +149,9 @@ function Register() {
                                     <FaUser className="text-gray-400" />
                                     <input
                                         type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
                                         placeholder="Enter your full name"
                                         className="w-full outline-none"
                                     />
@@ -136,6 +166,9 @@ function Register() {
                                     <FaEnvelope className="text-gray-400" />
                                     <input
                                         type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         placeholder="Enter your email address"
                                         className="w-full outline-none"
                                     />
@@ -150,6 +183,9 @@ function Register() {
                                     <FaLock className="text-gray-400" />
                                     <input
                                         type="password"
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
                                         placeholder="Enter your password"
                                         className="w-full outline-none"
                                     />
@@ -165,6 +201,7 @@ function Register() {
                                     <FaLock className="text-gray-400" />
                                     <input
                                         type="password"
+                                        name="confirmPassword"
                                         placeholder="Confirm your password"
                                         className="w-full outline-none"
                                     />
@@ -216,9 +253,9 @@ function Register() {
                             <p className="text-center text-gray-500">
                                 Already have an account?{" "}
                                 <Link to={"/login"}>
-                                <span className="text-blue-600 font-medium cursor-pointer">
-                                    Login
-                                </span>
+                                    <span className="text-blue-600 font-medium cursor-pointer">
+                                        Login
+                                    </span>
                                 </Link>
                             </p>
 
