@@ -5,12 +5,12 @@ import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
+import { User } from "lucide-react";
 
-function Login() {
+function CreateAccount() {
 
     const [formData, setFormData] = useState({
-        email: "",
-        password: ""
+        user: ""
     })
     const handleChange = (e) => {
         setFormData({
@@ -18,18 +18,23 @@ function Login() {
             [e.target.name]: e.target.value,
         });
     };
+    console.log(formData);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const token = localStorage.getItem("token");
+
+            console.log("TOKEN:", token);
             const response = await axios.post(
-                "http://localhost:3000/api/auth/login", formData
+                "http://localhost:3000/api/account", formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             )
             localStorage.setItem("token", response.data.token);
-            localStorage.setItem(
-                "user",
-                JSON.stringify(response.data.user)
-            );
 
             console.log(response.data)
         } catch (err) {
@@ -57,16 +62,15 @@ function Login() {
                     <div>
 
                         <h1 className='text-5xl lg:text-6xl font-bold text-slate-900 leading-tight'>
-                            Welcome back!
-                            <br />
-                            glad to see{" "}
+                            Create your ledger account
+                            and get{" "}
                             <span className='text-blue-600'>
-                                you again
+                                started
                             </span>
                         </h1>
 
                         <p className="mt-6 text-xl text-gray-600">
-                            Login to Backend Ledger and continue managing your finances efficiently.
+                            Choose a unique username to create your ledger account and start managing your finances.
                         </p>
 
                         <div className='mt-12 space-y-8'>
@@ -133,13 +137,17 @@ function Login() {
 
 
                     <div className="bg-white p-15 rounded-3xl shadow-lg w-full max-w-xl">
+                        <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6">
+                            <User size={50} className="text-blue-600" />
+                        </div>
+
 
                         <h2 className="text-4xl font-bold text-center text-slate-900">
-                            Welcome back!
+                            Create Account
                         </h2>
 
                         <p className="text-center text-gray-500 mt-3">
-                            Login to your account to continue
+                            Choose a username to get started
                         </p>
 
                         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
@@ -147,43 +155,23 @@ function Login() {
 
                             {/* Email */}
                             <div>
-                                <label className="font-medium">Email Address</label>
+                                <label className="font-medium">Username</label>
 
                                 <div className="mt-2 border hover:shadow-lg transition-all duration-300 border-gray-200 rounded-xl px-4 py-4 flex items-center gap-4">
-                                    <FaEnvelope className="text-gray-400" />
+                                    <FaUser className="text-gray-400" />
                                     <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
+                                        type="text"
+                                        name="user"
+                                        value={formData.user}
                                         onChange={handleChange}
-                                        placeholder="Enter your email address"
+                                        placeholder="Enter your username"
                                         className="w-full outline-none"
                                     />
                                 </div>
                             </div>
 
                             {/* Password */}
-                            <div>
-                                <label className="font-medium">Password</label>
 
-                                <div className="mt-2 border hover:shadow-lg transition-all duration-300 border-gray-200 rounded-xl px-4 py-4 flex items-center gap-4">
-                                    <FaLock className="text-gray-400" />
-                                    <input
-                                        type="password"
-                                        name='password'
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        placeholder="Enter your password"
-                                        className="w-full outline-none"
-                                    />
-                                    <IoEyeOutline className="text-gray-400 cursor-pointer" />
-                                </div>
-                            </div>
-                            <div className="text-right mt-2">
-                                <button className="text-blue-600 text-sm cursor-pointer hover:underline">
-                                    Forgot Password?
-                                </button>
-                            </div>
 
 
 
@@ -192,50 +180,9 @@ function Login() {
                                 type="submit"
                                 className="w-full bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
                             >
-                                Login
+                                Create Account
                             </button>
 
-                            {/* Divider */}
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1 h-px bg-gray-300"></div>
-
-                                <span className="text-gray-500">
-                                    or login with
-                                </span>
-
-                                <div className="flex-1 h-px bg-gray-300"></div>
-                            </div>
-
-                            {/* Social Buttons */}
-                            <div className="grid grid-cols-2 gap-4">
-
-                                <button
-                                    type="button"
-                                    className="border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50"
-                                >
-                                    <FaGoogle />
-                                    Google
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50"
-                                >
-                                    <FaGithub />
-                                    GitHub
-                                </button>
-
-                            </div>
-
-                            {/* Login Link */}
-                            <p className="text-center text-gray-500">
-                                Don't have an account?{" "}
-                                <Link to={"/register"}>
-                                    <span className="text-blue-600 font-medium cursor-pointer">
-                                        Register
-                                    </span>
-                                </Link>
-                            </p>
 
                         </form>
 
@@ -248,4 +195,4 @@ function Login() {
     )
 }
 
-export default Login
+export default CreateAccount

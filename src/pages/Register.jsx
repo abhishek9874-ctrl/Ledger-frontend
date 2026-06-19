@@ -4,9 +4,12 @@ import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 
 function Register() {
+    const navigate=useNavigate()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -29,6 +32,8 @@ function Register() {
             localStorage.setItem("token", response.data.token);
 
             console.log(response.data)
+
+            navigate("/createAccount")
         } catch (err) {
             console.log(err.response?.data);
         }
@@ -53,7 +58,7 @@ function Register() {
                     <div>
 
                         <h1 className='text-5xl lg:text-6xl font-bold text-slate-900 leading-tight'>
-                            Create your account
+                            Create your profile
                             <br />
                             and get{" "}
                             <span className='text-blue-600'>
@@ -132,11 +137,11 @@ function Register() {
                     <div className="bg-white p-15 rounded-3xl shadow-lg w-full max-w-xl">
 
                         <h2 className="text-4xl font-bold text-center text-slate-900">
-                            Create Account
+                            Create your profile
                         </h2>
 
                         <p className="text-center text-gray-500 mt-3">
-                            Fill in the details below to create your account
+                            Fill in the details below and get started
                         </p>
 
                         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
@@ -210,12 +215,14 @@ function Register() {
                             </div>
 
                             {/* Button */}
-                            <button
+                            
+                                 <button
                                 type="submit"
                                 className="w-full bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
                             >
-                                Create Account
+                                Register
                             </button>
+                        
 
                             {/* Divider */}
                             <div className="flex items-center gap-4">
