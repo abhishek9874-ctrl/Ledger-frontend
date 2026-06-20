@@ -9,7 +9,9 @@ function Dashboard() {
     const [showBalance, setShowBalance] = useState(false);
     const [accounts, setAccounts] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
-    console.log(accounts);
+
+    const [transactions, setTransactions] = useState([]);
+    
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
@@ -24,10 +26,7 @@ function Dashboard() {
                     }
                 );
 
-                console.log(response.data);
-
                 setAccounts(response.data.accounts);
-                console.log(response.data.accounts);
 
 
 
@@ -42,8 +41,18 @@ function Dashboard() {
                     }
                 );
 
-                console.log(balanceResponse.data);
                 setTotalBalance(balanceResponse.data.balance);
+
+                const transactionResponse = await axios.get(
+                    "http://localhost:3000/api/transactions/recent",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                setTransactions(transactionResponse.data.transactions);
             } catch (error) {
                 console.log(error.response?.data);
             }
@@ -172,70 +181,49 @@ function Dashboard() {
 
                         <div className="space-y-4">
 
-                            {/* Account Card */}
-                            <div className="border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all duration-300 cursor-pointer">
-                                <div className="flex items-center gap-4">
+                            {accounts.map((account) => (
+                                <div
+                                    key={account._id}
+                                    className="border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all duration-300 cursor-pointer"
+                                >
+                                    <div className="flex items-center gap-4">
 
-                                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                                        🏦
+                                        <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                                            🏦
+                                        </div>
+
+                                        <div>
+                                            <h3 className="font-semibold text-lg">
+                                                Account
+                                            </h3>
+
+                                            <p className="text-gray-500 text-sm">
+                                                ACC-{account._id.slice(-4)}
+                                            </p>
+                                        </div>
+
                                     </div>
 
-                                    <div>
-                                        <h3 className="font-semibold text-lg">
-                                            Savings Account
+                                    <div className="text-right">
+                                        <span
+                                            className={`px-3 py-1 rounded-lg text-sm ${account.status === "ACTIVE"
+                                                ? "bg-green-100 text-green-700"
+                                                : "bg-red-100 text-red-700"
+                                                }`}
+                                        >
+                                            {account.status}
+                                        </span>
+
+                                        <h3 className="font-bold text-lg mt-2 text-gray-500">
+                                            Click to View
                                         </h3>
-
-                                        <p className="text-gray-500 text-sm">
-                                            ACC-1234
-                                        </p>
                                     </div>
-
                                 </div>
+                            ))}
 
-                                <div className="text-right">
-                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm">
-                                        ACTIVE
-                                    </span>
-
-                                    <h3 className="font-bold text-xl mt-2">
-                                        ₹25,000
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Account Card */}
-                            <div className="border border-gray-200 rounded-2xl p-5 flex items-center justify-between hover:shadow-md transition-all duration-300 cursor-pointer">
-                                <div className="flex items-center gap-4">
-
-                                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
-                                        🏦
-                                    </div>
-
-                                    <div>
-                                        <h3 className="font-semibold text-lg">
-                                            Current Account
-                                        </h3>
-
-                                        <p className="text-gray-500 text-sm">
-                                            ACC-5678
-                                        </p>
-                                    </div>
-
-                                </div>
-
-                                <div className="text-right">
-                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm">
-                                        ACTIVE
-                                    </span>
-
-                                    <h3 className="font-bold text-xl mt-2">
-                                        ₹20,000
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Create Account Button */}
-                            <button className="w-full border border-gray-200 rounded-2xl py-4  text-blue-600 font-semibold hover:bg-blue-50 transition">
+                            <button
+                                className="w-full border border-gray-200 rounded-2xl py-4 text-blue-600 font-semibold hover:bg-blue-50 transition"
+                            >
                                 + Add Account
                             </button>
 
@@ -255,57 +243,32 @@ function Dashboard() {
                         </div>
 
                         <div className="space-y-5">
-
-                            {/* Transaction */}
-                            <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+                            {transactions.map((transaction)=>(
+                                 <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
                                 <div>
                                     <h3 className="font-semibold">
-                                        Salary Credit
+                                        Transaction
                                     </h3>
 
                                     <p className="text-sm text-gray-500">
-                                        16 Jun 2025
+                                        {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
                                     </p>
                                 </div>
 
                                 <span className="text-green-600 font-bold">
-                                    +₹50,000
+                                     ₹{transaction.amount.toLocaleString("en-IN")}
                                 </span>
                             </div>
+                            ))}
 
                             {/* Transaction */}
-                            <div className="flex justify-between items-center border-b border-gray-200 pb-4">
-                                <div>
-                                    <h3 className="font-semibold">
-                                        Amazon Purchase
-                                    </h3>
-
-                                    <p className="text-sm text-gray-500">
-                                        15 Jun 2025
-                                    </p>
-                                </div>
-
-                                <span className="text-red-500 font-bold">
-                                    -₹1,250
-                                </span>
-                            </div>
+                           
 
                             {/* Transaction */}
-                            <div className="flex justify-between items-center border-b border-gray-200 pb-4">
-                                <div>
-                                    <h3 className="font-semibold">
-                                        Netflix Subscription
-                                    </h3>
+                            
 
-                                    <p className="text-sm text-gray-500">
-                                        15 Jun 2025
-                                    </p>
-                                </div>
-
-                                <span className="text-red-500 font-bold">
-                                    -₹499
-                                </span>
-                            </div>
+                            {/* Transaction */}
+                            
 
                             <div className="text-center pt-2">
                                 <button className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700">
