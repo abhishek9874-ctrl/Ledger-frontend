@@ -4,7 +4,7 @@ import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User } from "lucide-react";
 
 function CreateAccount() {
@@ -12,6 +12,8 @@ function CreateAccount() {
     const [formData, setFormData] = useState({
         user: ""
     })
+
+    const navigate=useNavigate();
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -34,9 +36,10 @@ function CreateAccount() {
                     }
                 }
             )
-            localStorage.setItem("token", response.data.token);
 
             console.log(response.data)
+            navigate("/dashboard")
+            
         } catch (err) {
             console.log(err.response?.data)
         }

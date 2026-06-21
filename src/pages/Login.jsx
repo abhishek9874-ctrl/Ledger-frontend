@@ -4,9 +4,10 @@ import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -26,12 +27,14 @@ function Login() {
                 "http://localhost:3000/api/auth/login", formData
             )
             localStorage.setItem("token", response.data.token);
+
             localStorage.setItem(
                 "user",
                 JSON.stringify(response.data.user)
             );
 
             console.log(response.data)
+            navigate("/dashboard")
         } catch (err) {
             console.log(err.response?.data)
         }

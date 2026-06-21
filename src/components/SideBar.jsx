@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+
 import {
+  Landmark,
   LayoutDashboard,
   Wallet,
   ArrowLeftRight,
@@ -18,7 +21,9 @@ function SideBar() {
     <>
       {/* Mobile Navbar */}
       <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
-        <h1 className="text-xl font-bold text-blue-600">
+        
+        <h1 className=" flex gap-2 text-xl font-bold text-blue-600">
+          <Landmark className="text-blue-600"/>
           Backend Ledger
         </h1>
 
@@ -50,6 +55,7 @@ function SideBar() {
         <div>
           {/* Logo */}
           <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+            <Landmark className="text-blue-600"/>
             <h1 className="text-2xl font-bold text-blue-600">
               Backend Ledger
             </h1>
@@ -65,15 +71,31 @@ function SideBar() {
           {/* Navigation */}
           <div className="p-4 space-y-2">
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium">
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "hover:bg-gray-100"
+                }`
+              }
+            >
               <LayoutDashboard size={20} />
               Dashboard
-            </button>
+            </NavLink>
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
+            <NavLink
+              to="/accounts"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "hover:bg-gray-100"
+                }`
+              }
+            >
               <Wallet size={20} />
               Accounts
-            </button>
+            </NavLink>
 
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
               <ArrowLeftRight size={20} />

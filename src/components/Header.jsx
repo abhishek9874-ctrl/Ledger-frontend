@@ -1,14 +1,24 @@
 import React from "react";
 import { Bell } from "lucide-react";
+import { useLocation } from "react-router-dom";
 const user = JSON.parse(localStorage.getItem("user"));
 
 function Header() {
+  const location=useLocation();
+  const pageTitle =
+  location.pathname === "/dashboard"
+    ? "Dashboard"
+    : location.pathname === "/accounts"
+    ? "Accounts"
+    : location.pathname === "/transactions"
+    ? "Transactions"
+    : "Backend Ledger";
   return (
     <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
 
       {/* Left Side */}
       <h1 className="text-2xl md:text-4xl font-bold text-slate-900">
-        Dashboard
+        {pageTitle}
       </h1>
 
       {/* Right Side */}
