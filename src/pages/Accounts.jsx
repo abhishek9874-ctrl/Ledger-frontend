@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import {
     Landmark,
     Wallet,
@@ -26,9 +27,6 @@ function Accounts() {
                         },
                     }
                 );
-
-                setAccounts(response.data.accounts);
-
 
                 setAccounts(response.data.accounts);
 
@@ -207,9 +205,11 @@ function Accounts() {
                                     {account.status}
                                 </span>
 
-                                <button className="w-full xl:w-auto border border-blue-600 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition">
+                               <Link to={`/viewdetails/${account._id}`}>
+                                    <button className="w-full xl:w-auto border border-blue-600 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition">
                                     View Details →
                                 </button>
+                               </Link>
 
                             </div>
 

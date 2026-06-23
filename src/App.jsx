@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import CreateAccount from './pages/CreateAccount'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
+import ViewDetails from './pages/ViewDetails'
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Route path='/createAccount' element={<CreateAccount/>}/>
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/accounts' element={<Accounts/>}/>
+      <Route path='/viewdetails/:accountId' element={<ViewDetails/>}/>
     </Routes>
   )
 }

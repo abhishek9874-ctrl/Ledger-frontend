@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 const user = JSON.parse(localStorage.getItem("user"));
 
 function Header() {
+
+
+
+
   const location=useLocation();
   const pageTitle =
   location.pathname === "/dashboard"
@@ -12,6 +17,8 @@ function Header() {
     ? "Accounts"
     : location.pathname === "/transactions"
     ? "Transactions"
+    : location.pathname.startsWith("/viewdetails")
+    ?"Account Details"
     : "Backend Ledger";
   return (
     <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
