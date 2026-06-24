@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { Info } from "lucide-react";
 import { Wallet } from "lucide-react";
+const user = JSON.parse(localStorage.getItem("user"));
 import {
     IdCard,
     IndianRupee,
@@ -15,8 +16,80 @@ import {
     ArrowUp,
     BarChart3
 } from "lucide-react";
+import axios from 'axios';
 
 function ViewDetails() {
+    const [accounts, setAccounts] = useState([]);
+    const [balance, setBalance] = useState(0);
+    const [totalCredits, setTotalCredits] = useState(0);
+    const [totalDebits, setTotalDebits] = useState(0);
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            try {
+                const token = localStorage.getItem("token")
+
+                const response = await axios.get(
+                    `http://localhost:3000/api/account`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                    }
+                );
+                setAccounts(response.data.accounts);
+
+                 const accountId = response.data.accounts[0]._id;
+
+                if (response.data.accounts.length > 0) {
+
+                   
+
+                    const balanceResponse = await axios.get(
+                        `http://localhost:3000/api/account/balance/${accountId}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+
+                    setBalance(balanceResponse.data.balance);
+                }
+                const ledgerResponse = await axios.get(
+                    `http://localhost:3000/api/ledger/${accountId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                console.log(ledgerResponse.data);
+                const credits = ledgerResponse.data.entries
+                    .filter(entry => entry.type === "CREDIT")
+                    .reduce((sum, entry) => sum + entry.amount, 0);
+
+                setTotalCredits(credits);
+
+
+
+                const debits = ledgerResponse.data.entries
+                    .filter(entry => entry.type === "DEBIT")
+                    .reduce((sum, entry) => sum + entry.amount, 0);
+
+                setTotalDebits(debits);
+
+
+            } catch (err) {
+                console.log(err.response?.data)
+            }
+        };
+        fetchAccounts();
+    }, [])
+
+
+
     return (
         <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
             <SideBar />
@@ -32,7 +105,7 @@ function ViewDetails() {
                         </p>
 
                         <h1 className="text-6xl font-bold mt-3">
-                            ₹11,000
+                            ₹{balance.toLocaleString("en-IN")}
                         </h1>
 
                         <span className="inline-block mt-4 bg-blue-100 text-blue-600 px-4 py-2 rounded-xl font-medium">
@@ -67,7 +140,7 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Account ID</p>
                                     <h4 className="font-semibold break-all">
-                                        61abeb5edab93690ea01de7c
+                                        {accounts[0]?._id}
                                     </h4>
                                 </div>
                             </div>
@@ -80,7 +153,7 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Currency</p>
                                     <h4 className="font-semibold">
-                                        INR
+                                        {accounts[0]?.currency}
                                     </h4>
                                 </div>
                             </div>
@@ -93,7 +166,9 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Created On</p>
                                     <h4 className="font-semibold">
-                                        31 May 2026
+                                        {accounts[0]?.createdAt
+                                            ? new Date(accounts[0].createdAt).toLocaleDateString("en-IN")
+                                            : "Loading..."}
                                     </h4>
                                 </div>
                             </div>
@@ -114,7 +189,7 @@ function ViewDetails() {
                                     </p>
 
                                     <span className="bg-green-100 text-green-700 px-4 py-1 rounded-xl font-medium">
-                                        ACTIVE
+                                        {accounts[0]?.status}
                                     </span>
                                 </div>
                             </div>
@@ -126,11 +201,11 @@ function ViewDetails() {
 
                                 <div>
                                     <p className="text-gray-500">
-                                        Last Updated
+                                        Account Holder Name
                                     </p>
 
                                     <h4 className="font-semibold">
-                                        20 Jun 2026, 10:30 AM
+                                        {user?.name}
                                     </h4>
                                 </div>
                             </div>
@@ -155,7 +230,7 @@ function ViewDetails() {
                             </p>
 
                             <h3 className="text-4xl font-bold text-green-600 mt-1">
-                                ₹48,000
+                                ₹{totalCredits.toLocaleString("en-IN")}
                             </h3>
 
                             <p className="text-gray-500 mt-1">
@@ -178,7 +253,7 @@ function ViewDetails() {
                             </p>
 
                             <h3 className="text-4xl font-bold text-red-500 mt-1">
-                                ₹37,000
+                                ₹{totalDebits.toLocaleString("en-IN")}
                             </h3>
 
                             <p className="text-gray-500 mt-1">
@@ -201,7 +276,7 @@ function ViewDetails() {
                             </p>
 
                             <h3 className="text-4xl font-bold text-purple-600 mt-1">
-                                ₹11,000
+                                ₹{balance.toLocaleString("en-IN")}
                             </h3>
 
                             <p className="text-gray-500 mt-1">
@@ -224,7 +299,6 @@ function ViewDetails() {
 
                 </div>
             </div>
-
         </div>
     )
 }
