@@ -10,6 +10,8 @@ import CreateAccount from './pages/CreateAccount'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
 import ViewDetails from './pages/ViewDetails'
+import Transactions from './pages/Transactions'
+
 
 
 function App() {
@@ -24,6 +26,7 @@ function App() {
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/accounts' element={<Accounts/>}/>
       <Route path='/viewdetails/:accountId' element={<ViewDetails/>}/>
+      <Route path='/transactions'  element={<Transactions/>}/>
     </Routes>
   )
 }

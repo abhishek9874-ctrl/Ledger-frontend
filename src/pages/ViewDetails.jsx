@@ -123,7 +123,7 @@ function ViewDetails() {
                 </div>
                 <div className=" hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-100 hover:scale-[1.01]  bg-white border md:m-6 m-4 hover:shadow-lg  transition-all duration-300 border-gray-200 rounded-3xl p-8 mt-8">
 
-                    <h2 className="text-3xl font-bold mb-8">
+                    <h2 className="md:text-3xl text-xl font-bold mb-8">
                         Account Information
                     </h2>
 

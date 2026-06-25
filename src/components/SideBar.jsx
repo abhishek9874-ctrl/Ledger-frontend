@@ -98,10 +98,18 @@ function SideBar() {
               Accounts
             </NavLink>
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
-              <ArrowLeftRight size={20} />
+            <NavLink
+              to="/transactions"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "hover:bg-gray-100"
+                }`
+              }
+            >
+              <LayoutDashboard size={20} />
               Transactions
-            </button>
+            </NavLink>
 
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
               <Repeat size={20} />
