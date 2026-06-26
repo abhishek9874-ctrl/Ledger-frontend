@@ -1,10 +1,94 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { ArrowDown, ArrowUp, ArrowLeftRight, Wallet, CalendarDays, Search } from "lucide-react";
+import axios from 'axios';
 
 
 function Transactions() {
+  const [accounts, setAccounts] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [totalCredits, setTotalCredits] = useState(0);
+  const [totalDebits, setTotalDebits] = useState(0);
+  const [totalTransactions, setTotalTransactions] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const token = localStorage.getItem("token")
+
+        const response = await axios.get(
+          `http://localhost:3000/api/account`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+          }
+        );
+        setAccounts(response.data.accounts);
+
+        const accountId = response.data.accounts[0]._id;
+
+        const transactionResponse = await axios.get(
+          `http://localhost:3000/api/ledger/${accountId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        setTransactions(transactionResponse.data.entries);
+
+        if (response.data.accounts.length > 0) {
+
+
+
+          const balanceResponse = await axios.get(
+            `http://localhost:3000/api/account/balance/${accountId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setBalance(balanceResponse.data.balance);
+        }
+        const ledgerResponse = await axios.get(
+          `http://localhost:3000/api/ledger/${accountId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log(ledgerResponse.data);
+        const credits = ledgerResponse.data.entries
+          .filter(entry => entry.type === "CREDIT")
+          .reduce((sum, entry) => sum + entry.amount, 0);
+
+        setTotalCredits(credits);
+
+
+
+        const debits = ledgerResponse.data.entries
+          .filter(entry => entry.type === "DEBIT")
+          .reduce((sum, entry) => sum + entry.amount, 0);
+
+        setTotalDebits(debits);
+        setTotalTransactions(ledgerResponse.data.entries.length);
+
+
+      } catch (err) {
+        console.log(err.response?.data)
+      }
+    };
+    fetchAccounts();
+  }, [])
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
       <SideBar />
@@ -25,7 +109,7 @@ function Transactions() {
               </p>
 
               <h2 className="text-4xl font-bold text-green-600 mt-1">
-                ₹1,24,500
+                ₹{totalCredits.toLocaleString("en-IN")}
               </h2>
 
               <p className="text-gray-500 mt-2">
@@ -48,7 +132,7 @@ function Transactions() {
               </p>
 
               <h2 className="text-4xl font-bold text-red-500 mt-1">
-                ₹86,250
+                ₹{totalDebits.toLocaleString("en-IN")}
               </h2>
 
               <p className="text-gray-500 mt-2">
@@ -71,7 +155,7 @@ function Transactions() {
               </p>
 
               <h2 className="text-4xl font-bold text-blue-600 mt-1">
-                28
+                {totalTransactions}
               </h2>
 
               <p className="text-gray-500 mt-2">
@@ -94,7 +178,7 @@ function Transactions() {
               </p>
 
               <h2 className="text-4xl font-bold text-purple-600 mt-1">
-                ₹38,250
+                ₹{balance.toLocaleString("en-IN")}
               </h2>
 
               <p className="text-gray-500 mt-2">
@@ -196,62 +280,73 @@ function Transactions() {
 
                 </div>
 
-                {/* Row */}
-                <div className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
 
-                  {/* Date */}
-                  <div>
-                    <p className="font-medium">
-                      24 Jun 2026
-                    </p>
+                {transactions.map((transaction) => (
+                  <div key={transaction._id} className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
 
-                    <p className="text-sm text-gray-500">
-                      09:45 PM
-                    </p>
+                    {/* Date */}
+                    <div>
+                      <p className="font-medium">
+                        {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                      </p>
+
+                      <p className="text-sm text-gray-500">
+                        {new Date(transaction.createdAt).toLocaleTimeString("en-IN")}
+                      </p>
+                    </div>
+
+                    {/* Type */}
+                    <div className="flex items-center gap-2">
+
+                      {transaction.type === "CREDIT" ? (
+                        <ArrowDown className="text-green-600" size={20} />
+                      ) : (
+                        <ArrowUp className="text-red-600" size={20} />
+                      )}
+
+                      <span className={
+                        transaction.type === "CREDIT"
+                          ? "text-green-600 font-medium"
+                          : "text-red-600 font-medium"
+                      }>
+                        {transaction.type === "CREDIT"
+                          ? "CREDIT" : "DEBIT"}
+                      </span>
+
+                    </div>
+
+                    {/* Counterparty */}
+                    <div>
+
+                      <p className="font-medium">
+                        Rahul Sharma
+                      </p>
+
+                      <p className="text-sm text-gray-500">
+                        XXXX2345
+                      </p>
+
+                    </div>
+
+                    {/* Amount */}
+                    <div className={`font-bold ${transaction.type === "CREDIT"
+                        ? "text-green-600"
+                        : "text-red-600"
+                      }`}>
+                      ₹{transaction.amount.toLocaleString("en-IN")}
+                    </div>
+
+                    {/* Status */}
+                    <div>
+
+                      <span className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-medium">
+                        Completed
+                      </span>
+
+                    </div>
+
                   </div>
-
-                  {/* Type */}
-                  <div className="flex items-center gap-2">
-
-                    <ArrowDown
-                      className="text-green-600"
-                      size={20}
-                    />
-
-                    <span className="text-green-600 font-medium">
-                      Credit
-                    </span>
-
-                  </div>
-
-                  {/* Counterparty */}
-                  <div>
-
-                    <p className="font-medium">
-                      Rahul Sharma
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      XXXX2345
-                    </p>
-
-                  </div>
-
-                  {/* Amount */}
-                  <div className="font-bold text-green-600">
-                    +₹5,000
-                  </div>
-
-                  {/* Status */}
-                  <div>
-
-                    <span className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-medium">
-                      Completed
-                    </span>
-
-                  </div>
-
-                </div>
+                ))}
 
               </div>
 
