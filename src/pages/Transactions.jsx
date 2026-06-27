@@ -12,6 +12,8 @@ function Transactions() {
   const [totalDebits, setTotalDebits] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [myAccountId, setMyAccountId] = useState("");
+  const [filter, setFilter] = useState("ALL");
 
 
   useEffect(() => {
@@ -30,16 +32,17 @@ function Transactions() {
         setAccounts(response.data.accounts);
 
         const accountId = response.data.accounts[0]._id;
+        setMyAccountId(accountId);
 
         const transactionResponse = await axios.get(
-          `http://localhost:3000/api/ledger/${accountId}`,
+          `http://localhost:3000/api/transactions`,
           {
             headers: {
               Authorization: `Bearer ${token}`
             }
           }
         );
-        setTransactions(transactionResponse.data.entries);
+        setTransactions(transactionResponse.data.transactions);
 
         if (response.data.accounts.length > 0) {
 
@@ -88,6 +91,15 @@ function Transactions() {
     };
     fetchAccounts();
   }, [])
+  const filteredTransactions = transactions.filter((transaction) => {
+    const isCredit = transaction.toAccount._id === myAccountId;
+
+    if (filter === "ALL") return true;
+    if (filter === "CREDIT") return isCredit;
+    if (filter === "DEBIT") return !isCredit;
+
+    return true;
+  });
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
@@ -197,18 +209,35 @@ function Transactions() {
             {/* Left Side Buttons */}
             <div className="flex flex-wrap gap-3">
 
-              <button className="px-6 py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+              <button
+                onClick={() => setFilter("ALL")}
+                className={`px-6 py-3 rounded-xl font-medium transition ${filter === "ALL"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+              >
                 All
               </button>
 
-              <button className="px-6 py-3 rounded-xl bg-green-100 text-green-700 font-medium hover:bg-green-200 transition">
+              <button
+                onClick={() => setFilter("CREDIT")}
+                className={`px-6 py-3 rounded-xl font-medium transition ${filter === "CREDIT"
+                  ? "bg-green-600 text-white"
+                  : "bg-green-100 text-green-700 hover:bg-green-200"
+                  }`}
+              >
                 Credits
               </button>
 
-              <button className="px-6 py-3 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 transition">
+              <button
+                onClick={() => setFilter("DEBIT")}
+                className={`px-6 py-3 rounded-xl font-medium transition ${filter === "DEBIT"
+                  ? "bg-red-600 text-white"
+                  : "bg-red-100 text-red-700 hover:bg-red-200"
+                  }`}
+              >
                 Debits
               </button>
-
             </div>
 
             {/* Right Side */}
@@ -280,73 +309,92 @@ function Transactions() {
 
                 </div>
 
-
-                {transactions.map((transaction) => (
-                  <div key={transaction._id} className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
-
-                    {/* Date */}
+                {filteredTransactions.map((transaction) => {
+                  const isCredit = transaction.toAccount._id === myAccountId;
+                  return (
                     <div>
-                      <p className="font-medium">
-                        {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
-                      </p>
+                      <div key={transaction._id} className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
 
-                      <p className="text-sm text-gray-500">
-                        {new Date(transaction.createdAt).toLocaleTimeString("en-IN")}
-                      </p>
+                        {/* Date */}
+                        <div>
+                          <p className="font-medium">
+                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                            {new Date(transaction.createdAt).toLocaleTimeString("en-IN")}
+                          </p>
+                        </div>
+
+                        {/* Type */}
+                        <div className="flex items-center gap-2">
+
+                          {isCredit ? (
+                            <ArrowDown className="text-green-600" size={20} />
+                          ) : (
+                            <ArrowUp className="text-red-600" size={20} />
+                          )}
+
+                          <span className={
+                            isCredit ?
+                              "text-green-600 font-medium"
+                              : "text-red-600 font-medium"
+                          }>
+                            {isCredit ?
+                              "CREDIT" : "DEBIT"}
+                          </span>
+
+                        </div>
+
+                        {/* Counterparty */}
+                        <div>
+
+                          <p className="font-medium">
+                            {isCredit
+                              ? transaction.fromAccount.user.name
+                              : transaction.toAccount.user.name}
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                            ****
+                            {(isCredit
+                              ? transaction.fromAccount._id
+                              : transaction.toAccount._id
+                            ).slice(-6)}
+                          </p>
+
+                        </div>
+
+                        {/* Amount */}
+                        <div
+                          className={`font-bold ${isCredit ? "text-green-600" : "text-red-600"
+                            }`}
+                        >
+                          {isCredit ? "+" : "-"}₹{transaction.amount.toLocaleString("en-IN")}
+                        </div>
+
+                        {/* Status */}
+                        <div>
+
+                          <span
+                            className={`px-4 py-2 rounded-xl text-sm font-medium ${transaction.status === "COMPLETED"
+                              ? "bg-green-100 text-green-700"
+                              : transaction.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : transaction.status === "FAILED"
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
+                          >
+                            {transaction.status}
+                          </span>
+
+                        </div>
+
+                      </div>
                     </div>
-
-                    {/* Type */}
-                    <div className="flex items-center gap-2">
-
-                      {transaction.type === "CREDIT" ? (
-                        <ArrowDown className="text-green-600" size={20} />
-                      ) : (
-                        <ArrowUp className="text-red-600" size={20} />
-                      )}
-
-                      <span className={
-                        transaction.type === "CREDIT"
-                          ? "text-green-600 font-medium"
-                          : "text-red-600 font-medium"
-                      }>
-                        {transaction.type === "CREDIT"
-                          ? "CREDIT" : "DEBIT"}
-                      </span>
-
-                    </div>
-
-                    {/* Counterparty */}
-                    <div>
-
-                      <p className="font-medium">
-                        Rahul Sharma
-                      </p>
-
-                      <p className="text-sm text-gray-500">
-                        XXXX2345
-                      </p>
-
-                    </div>
-
-                    {/* Amount */}
-                    <div className={`font-bold ${transaction.type === "CREDIT"
-                        ? "text-green-600"
-                        : "text-red-600"
-                      }`}>
-                      ₹{transaction.amount.toLocaleString("en-IN")}
-                    </div>
-
-                    {/* Status */}
-                    <div>
-
-                      <span className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-medium">
-                        Completed
-                      </span>
-
-                    </div>
-
-                  </div>
-                ))}
+                  )
+                })}
 
               </div>
 
