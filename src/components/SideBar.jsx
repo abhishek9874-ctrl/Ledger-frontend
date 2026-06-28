@@ -56,7 +56,7 @@ function SideBar() {
         {/* Top Section */}
         <div>
           {/* Logo */}
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="p-6  border-gray-200 flex items-center justify-between">
             <Landmark className="text-blue-600" />
             <h1 className="text-2xl font-bold text-blue-600">
               Backend Ledger
@@ -107,14 +107,22 @@ function SideBar() {
                 }`
               }
             >
-              <LayoutDashboard size={20} />
+              <ArrowLeftRight size={20} />
               Transactions
             </NavLink>
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
+           <NavLink
+              to="/transfer"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "hover:bg-gray-100"
+                }`
+              }
+            >
               <Repeat size={20} />
-              Transfers
-            </button>
+              Transfer
+            </NavLink>
 
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
               <FileText size={20} />

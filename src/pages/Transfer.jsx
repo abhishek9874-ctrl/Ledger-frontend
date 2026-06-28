@@ -1,0 +1,313 @@
+import React, { useEffect,useRef ,useState } from 'react'
+import SideBar from '../components/SideBar'
+import Header from '../components/Header'
+import {
+    ArrowLeftRight,
+    Wallet,
+    User,
+    FileText,
+    Send,
+    ChevronDown,
+} from "lucide-react";
+import axios from 'axios';
+
+function Transfer() {
+    const [amount, setAmount] = useState("");
+    const [error, setError] = useState("");
+    const [accounts, setAccounts] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const fetchAllAccounts = async () => {
+        try {
+            const token = localStorage.getItem("token")
+
+            const response = await axios.get(
+                "http://localhost:3000/api/account/all",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            setAccounts(response.data.accounts);
+            if (response.data.accounts.length > 0) {
+                setSelectedAccount(response.data.accounts[0]);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        fetchAllAccounts();
+    }, []);
+    useEffect(() => {
+
+    function handleClickOutside(event) {
+
+        if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target)
+        ) {
+            setShowDropdown(false);
+        }
+
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+
+}, []);
+
+
+    return (
+        <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
+            <SideBar />
+            <div className='flex-1 bg-gray-50'>
+                <Header />
+                <div className="max-w-4xl mx-auto mt-10">
+                    <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-sm">
+
+                        {/* Header */}
+                        <div className="flex items-start gap-5 mb-10">
+
+                            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center">
+
+                                <ArrowLeftRight
+                                    size={34}
+                                    className="text-blue-600"
+                                />
+
+                            </div>
+
+                            <div>
+
+                                <h2 className="text-3xl font-bold text-gray-900">
+                                    Transfer Money
+                                </h2>
+
+                                <p className="text-gray-500 mt-1">
+                                    Fill in the details below to transfer money
+                                </p>
+
+                            </div>
+
+                        </div>
+                        {/* Transfer Form */}
+                        <div className="space-y-8">
+
+                            {/* ================= From Account ================= */}
+                            <div>
+
+                                <label className="block text-lg font-semibold text-gray-800 mb-3">
+                                    From Account
+                                </label>
+
+                                <button className="w-full border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-blue-500 transition">
+
+                                    <div className="flex items-center gap-4">
+
+                                        <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                                            <Wallet className="text-blue-600" size={24} />
+                                        </div>
+
+                                        <div className="text-left">
+
+                                            <h3 className="font-semibold text-lg">
+                                                Savings Account
+                                            </h3>
+
+                                            <p className="text-gray-500">
+                                                ****108bcd
+                                                <span className="mx-2">•</span>
+                                                ₹39,000.00
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <ChevronDown className="text-gray-500" size={22} />
+
+                                </button>
+
+                                <p className="text-blue-600 mt-3 font-medium">
+                                    This is your default account
+                                </p>
+
+                            </div>
+
+                            {/* ================= To Account ================= */}
+                            <div>
+
+                                <label className="block text-lg font-semibold text-gray-800 mb-3">
+                                    To Account
+                                </label>
+
+                                <div ref={dropdownRef} className="relative">
+
+                                    <button
+                                        onClick={() => setShowDropdown(!showDropdown)}
+                                        className="w-full border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-blue-500 transition"
+                                    >
+
+                                        <div className="flex items-center gap-4">
+
+                                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                                                <User className="text-gray-600" size={24} />
+                                            </div>
+
+                                            <div className="text-left">
+                                                <h3 className="font-semibold text-lg">
+                                                    {selectedAccount?.user?.name}
+                                                </h3>
+
+                                                <p className="text-gray-500">
+                                                    *****{selectedAccount?._id.slice(-6)}
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+                                        <ChevronDown className="text-gray-500" size={22} />
+
+                                    </button>
+
+                                    {/* Dropdown OUTSIDE the button */}
+                                    {showDropdown && (
+                                        <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
+
+                                            {accounts.map((account) => (
+                                                <button
+                                                    key={account._id}
+                                                    onClick={() => {
+                                                        setSelectedAccount(account);
+                                                        setShowDropdown(false);
+                                                    }}
+                                                    className="w-full px-5 py-4 text-left hover:bg-gray-100 transition"
+                                                >
+                                                    <h3 className="font-semibold">
+                                                        {account.user.name}
+                                                    </h3>
+
+                                                    <p className="text-sm text-gray-500">
+                                                        *****{account._id.slice(-6)}
+                                                    </p>
+                                                </button>
+                                            ))}
+
+                                        </div>
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                            {/* ================= Amount ================= */}
+                            <div>
+
+                                <label className="block text-lg font-semibold text-gray-800 mb-3">
+                                    Amount
+                                </label>
+
+                                <div className="flex border border-gray-200 rounded-2xl overflow-hidden">
+
+                                    <div className="w-16 bg-gray-50 flex items-center justify-center text-3xl text-gray-700">
+                                        ₹
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        value={amount}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+
+                                            if (value === "") {
+                                                setAmount("");
+                                                setError("");
+                                                return;
+                                            }
+
+                                            if (Number(value) < 0) {
+                                                setError("Amount cannot be negative");
+                                                setAmount("");
+                                                return;
+                                            }
+
+                                            setError("");
+                                            setAmount(value);
+                                        }}
+                                        placeholder="Enter amount"
+                                        className="flex-1 px-5 py-5 outline-none text-lg"
+                                    />
+
+                                    <div className="px-5 flex items-center text-gray-500 text-lg">
+                                        0.00
+                                    </div>
+
+                                </div>
+                                {error && (
+                                    <p className="text-red-500 text-sm mt-2">
+                                        {error}
+                                    </p>
+                                )}
+
+                                <p className="text-gray-500 mt-3">
+                                    Enter amount to transfer
+                                </p>
+
+                            </div>
+
+                            {/* ================= Transfer Note ================= */}
+                            <div>
+
+                                <label className="block text-lg font-semibold text-gray-800 mb-3">
+                                    Transfer Note (Optional)
+                                </label>
+
+                                <div className="flex border border-gray-200 rounded-2xl overflow-hidden">
+
+                                    <div className="w-16 bg-gray-50 flex items-center justify-center">
+                                        <FileText className="text-gray-500" size={22} />
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        placeholder="Add a note (optional)"
+                                        className="flex-1 px-5 py-5 outline-none text-lg"
+                                    />
+
+                                    <div className="px-5 flex items-center text-gray-500">
+                                        0/100
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {/* ================= Button ================= */}
+                            <button className="w-full bg-blue-600 hover:bg-blue-700 transition text-white rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3">
+
+                                <Send size={24} />
+
+                                Transfer Money
+
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    )
+}
+
+export default Transfer

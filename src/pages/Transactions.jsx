@@ -14,6 +14,7 @@ function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [myAccountId, setMyAccountId] = useState("");
   const [filter, setFilter] = useState("ALL");
+  const [search, setSearch] = useState("");
 
 
   useEffect(() => {
@@ -94,11 +95,22 @@ function Transactions() {
   const filteredTransactions = transactions.filter((transaction) => {
     const isCredit = transaction.toAccount._id === myAccountId;
 
-    if (filter === "ALL") return true;
-    if (filter === "CREDIT") return isCredit;
-    if (filter === "DEBIT") return !isCredit;
+    // Counterparty name
+    const counterparty = isCredit
+      ? transaction.fromAccount.user.name
+      : transaction.toAccount.user.name;
 
-    return true;
+    // Search filter
+    const matchesSearch = counterparty
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    // Credit / Debit filter
+    if (filter === "CREDIT" && !isCredit) return false;
+    if (filter === "DEBIT" && isCredit) return false;
+
+    // Search filter
+    return matchesSearch;
   });
 
   return (
@@ -282,6 +294,8 @@ function Transactions() {
                 <input
                   type="text"
                   placeholder="Search transactions..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="w-full outline-none bg-transparent"
                 />
 

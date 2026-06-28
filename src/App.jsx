@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
 import ViewDetails from './pages/ViewDetails'
 import Transactions from './pages/Transactions'
+import Transfer from './pages/Transfer'
 
 
 
@@ -27,6 +28,7 @@ function App() {
       <Route path='/accounts' element={<Accounts/>}/>
       <Route path='/viewdetails/:accountId' element={<ViewDetails/>}/>
       <Route path='/transactions'  element={<Transactions/>}/>
+      <Route path='/transfer' element={<Transfer/>}/>
     </Routes>
   )
 }

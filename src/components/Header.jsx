@@ -19,6 +19,8 @@ function Header() {
     ? "Transactions"
     : location.pathname.startsWith("/viewdetails")
     ?"Account Details"
+    : location.pathname ==="/transfer"
+    ? "Tranfer Money"
     : "Backend Ledger";
   return (
     <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
