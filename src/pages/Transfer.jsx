@@ -1,4 +1,4 @@
-import React, { useEffect,useRef ,useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import {
@@ -10,14 +10,18 @@ import {
     ChevronDown,
 } from "lucide-react";
 import axios from 'axios';
+import { v4 as uuidv4 } from "uuid";
 
 function Transfer() {
     const [amount, setAmount] = useState("");
-    const [error, setError] = useState("");
     const [accounts, setAccounts] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
+    const [myAccount, setMyAccount] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [amountError, setAmountError] = useState("");
+    const [recipientError, setRecipientError] = useState("");
 
     const fetchAllAccounts = async () => {
         try {
@@ -40,29 +44,107 @@ function Transfer() {
         }
     }
 
-    useEffect(() => {
-        fetchAllAccounts();
-    }, []);
-    useEffect(() => {
 
-    function handleClickOutside(event) {
+    const fetchMyAccount = async () => {
+        try {
+            const token = localStorage.getItem("token");
 
-        if (
-            dropdownRef.current &&
-            !dropdownRef.current.contains(event.target)
-        ) {
-            setShowDropdown(false);
+            const response = await axios.get(
+                `http://localhost:3000/api/account`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            setMyAccount(response.data.accounts[0])
+            fetchBalance(response.data.accounts[0]._id);
+        } catch (err) {
+            console.log(err)
         }
-
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
+
+
+    const fetchBalance = async (accountId) => {
+        try {
+
+            const token = localStorage.getItem("token");
+
+            const response = await axios.get(
+                `http://localhost:3000/api/account/balance/${accountId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            setBalance(response.data.balance);
+
+        } catch (err) {
+            console.log(err);
+        }
     };
 
-}, []);
+
+
+
+    useEffect(() => {
+        fetchMyAccount();
+        fetchAllAccounts();
+    }, []);
+
+    console.log(balance)
+    useEffect(() => {
+
+        function handleClickOutside(event) {
+
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setShowDropdown(false);
+            }
+
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+
+    }, []);
+
+
+
+    const handleTransfer = async () => {
+
+        setAmountError("");
+        setRecipientError("");
+
+        let hasError = false;
+
+        if (!selectedAccount) {
+            setRecipientError("Please select a recipient account");
+            hasError = true;
+        }
+
+        if (!amount || Number(amount) <= 0) {
+            setAmountError("Please enter a valid amount");
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        console.log("Validation Passed");
+        const idempotencyKey = uuidv4();
+
+        console.log(idempotencyKey);
+
+    }
 
 
     return (
@@ -123,9 +205,9 @@ function Transfer() {
                                             </h3>
 
                                             <p className="text-gray-500">
-                                                ****108bcd
+                                                *****{myAccount?._id.slice(-6)}
                                                 <span className="mx-2">•</span>
-                                                ₹39,000.00
+                                                ₹{balance.toLocaleString("en-IN")}
                                             </p>
 
                                         </div>
@@ -203,6 +285,11 @@ function Transfer() {
 
                                         </div>
                                     )}
+                                    {recipientError && (
+                                        <p className="text-red-500 text-sm mt-2">
+                                            {recipientError}
+                                        </p>
+                                    )}
 
                                 </div>
 
@@ -230,17 +317,17 @@ function Transfer() {
 
                                             if (value === "") {
                                                 setAmount("");
-                                                setError("");
+                                                setAmountError("");
                                                 return;
                                             }
 
                                             if (Number(value) < 0) {
-                                                setError("Amount cannot be negative");
+                                                setAmountError("Amount cannot be negative");
                                                 setAmount("");
                                                 return;
                                             }
 
-                                            setError("");
+                                            setAmountError("");
                                             setAmount(value);
                                         }}
                                         placeholder="Enter amount"
@@ -252,9 +339,9 @@ function Transfer() {
                                     </div>
 
                                 </div>
-                                {error && (
+                                {amountError && (
                                     <p className="text-red-500 text-sm mt-2">
-                                        {error}
+                                        {amountError}
                                     </p>
                                 )}
 
@@ -292,7 +379,9 @@ function Transfer() {
                             </div>
 
                             {/* ================= Button ================= */}
-                            <button className="w-full bg-blue-600 hover:bg-blue-700 transition text-white rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3">
+                            <button
+                                onClick={handleTransfer}
+                                className="w-full bg-blue-600 hover:bg-blue-700 transition text-white rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3 ">
 
                                 <Send size={24} />
 
