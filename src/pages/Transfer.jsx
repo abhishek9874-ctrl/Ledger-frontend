@@ -22,6 +22,11 @@ function Transfer() {
     const [balance, setBalance] = useState(0);
     const [amountError, setAmountError] = useState("");
     const [recipientError, setRecipientError] = useState("");
+    const [showSuccessCard, setShowSuccessCard] = useState(false);
+    const [note, setNote] = useState("");
+    const [successAmount, setSuccessAmount] = useState(0);
+    const [successRecipient, setSuccessRecipient] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const fetchAllAccounts = async () => {
         try {
@@ -140,10 +145,55 @@ function Transfer() {
         if (hasError) return;
 
         console.log("Validation Passed");
-        const idempotencyKey = uuidv4();
 
-        console.log(idempotencyKey);
 
+        setLoading(true);
+
+
+        try {
+            const idempotencyKey = uuidv4();
+
+            console.log(idempotencyKey);
+
+            const transferData = {
+                fromAccount: myAccount._id,
+                toAccount: selectedAccount._id,
+                amount: Number(amount),
+                idempotencyKey
+            };
+
+            console.log(transferData);
+
+            const token = localStorage.getItem("token");
+
+            const response = await axios.post(
+                "http://localhost:3000/api/transactions",
+                transferData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log(response.data);
+            await fetchMyAccount();
+            setSuccessAmount(Number(amount));
+            setSuccessRecipient(selectedAccount.user.name);
+            setShowSuccessCard(true);
+
+            setAmount("");
+            setNote("");
+            setAmountError("");
+            setRecipientError("");
+
+
+        } catch (err) {
+            console.log(err)
+        }
+        finally {
+            setLoading(false)
+        }
     }
 
 
@@ -366,6 +416,8 @@ function Transfer() {
 
                                     <input
                                         type="text"
+                                        value={note}
+                                        onChange={(e) => setNote(e.target.value)}
                                         placeholder="Add a note (optional)"
                                         className="flex-1 px-5 py-5 outline-none text-lg"
                                     />
@@ -381,18 +433,72 @@ function Transfer() {
                             {/* ================= Button ================= */}
                             <button
                                 onClick={handleTransfer}
-                                className="w-full bg-blue-600 hover:bg-blue-700 transition text-white rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3 ">
+                                disabled={loading}
+                                className={`w-full rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3 transition-all duration-200
+                                    ${
+                                        loading
+                                        ? "bg-blue-400 cursor-not-allowed opacity-80"
+                                        : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] text-white"
+                                    }`}
+                            >
+                                {!loading && <Send size={24} />}
 
-                                <Send size={24} />
-
-                                Transfer Money
-
+                                {loading ? "Transferring..." : "Transfer Money"}
                             </button>
-
                         </div>
 
                     </div>
                 </div>
+
+                {/* Success Card */}
+                {showSuccessCard && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                        <div className="bg-white w-[420px] rounded-3xl shadow-2xl p-8">
+
+                            <div className="flex justify-center mb-5">
+                                <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+                                    <span className="text-4xl">✅</span>
+                                </div>
+                            </div>
+
+                            <h2 className="text-2xl font-bold text-center">
+                                Transaction Completed
+                            </h2>
+
+                            <p className="text-center text-gray-500 mt-2">
+                                Your money has been transferred successfully.
+                            </p>
+
+                            <div className="mt-8 border rounded-2xl p-5 space-y-4">
+
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">To Account</span>
+
+                                    <span className="font-semibold">
+                                        {successRecipient}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Amount</span>
+
+                                    <span className="font-bold text-green-600">
+                                        ₹{successAmount.toLocaleString("en-IN")}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <button
+                                onClick={() => setShowSuccessCard(false)}
+                                className="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold"
+                            >
+                                Done
+                            </button>
+
+                        </div>
+                    </div>
+                )}
             </div>
 
         </div>
