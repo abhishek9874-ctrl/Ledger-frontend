@@ -1,14 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
-import {
-    ArrowLeftRight,
-    Wallet,
-    User,
-    FileText,
-    Send,
-    ChevronDown,
-} from "lucide-react";
+import { ArrowLeftRight, Wallet, User, FileText, Send, ChevronDown, } from "lucide-react";
 import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
 
@@ -27,6 +20,9 @@ function Transfer() {
     const [successAmount, setSuccessAmount] = useState(0);
     const [successRecipient, setSuccessRecipient] = useState("");
     const [loading, setLoading] = useState(false);
+    const [transferError, setTransferError] = useState("");
+    const [transactionTime, setTransactionTime] = useState("");
+    const [transactionId, setTransactionId] = useState("");
 
     const fetchAllAccounts = async () => {
         try {
@@ -125,6 +121,8 @@ function Transfer() {
 
 
 
+
+
     const handleTransfer = async () => {
 
         setAmountError("");
@@ -178,18 +176,28 @@ function Transfer() {
 
             console.log(response.data);
             await fetchMyAccount();
+            setTransactionId(response.data.transaction._id);
             setSuccessAmount(Number(amount));
             setSuccessRecipient(selectedAccount.user.name);
+            setTransactionTime(
+                new Date().toLocaleString("en-IN", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                })
+            );
             setShowSuccessCard(true);
 
             setAmount("");
             setNote("");
             setAmountError("");
             setRecipientError("");
+            setTransferError("");
 
 
         } catch (err) {
-            console.log(err)
+            setTransferError(
+                err.response?.data?.message || "Transfer failed. Please try again."
+            );
         }
         finally {
             setLoading(false)
@@ -417,26 +425,38 @@ function Transfer() {
                                     <input
                                         type="text"
                                         value={note}
+                                        maxLength={100}
                                         onChange={(e) => setNote(e.target.value)}
                                         placeholder="Add a note (optional)"
                                         className="flex-1 px-5 py-5 outline-none text-lg"
                                     />
 
                                     <div className="px-5 flex items-center text-gray-500">
-                                        0/100
+                                        {note.length}/100
                                     </div>
 
                                 </div>
 
                             </div>
 
+                            {transferError && (
+                                <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
+                                    <h3 className="text-red-700 font-semibold text-lg">
+                                        Transfer Failed
+                                    </h3>
+
+                                    <p className="text-red-600 mt-2 text-sm leading-6">
+                                        {transferError}
+                                    </p>
+                                </div>
+                            )}
+
                             {/* ================= Button ================= */}
                             <button
                                 onClick={handleTransfer}
                                 disabled={loading}
                                 className={`w-full rounded-2xl py-5 text-xl font-semibold flex items-center justify-center gap-3 transition-all duration-200
-                                    ${
-                                        loading
+                                    ${loading
                                         ? "bg-blue-400 cursor-not-allowed opacity-80"
                                         : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] text-white"
                                     }`}
@@ -452,8 +472,8 @@ function Transfer() {
 
                 {/* Success Card */}
                 {showSuccessCard && (
-                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                        <div className="bg-white w-[420px] rounded-3xl shadow-2xl p-8">
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-[fadeOverlay_0.3s_ease-out]">
+                        <div className="bg-white w-[420px] rounded-3xl shadow-2xl p-8 animate-[popup_0.3s_ease-out]">
 
                             <div className="flex justify-center mb-5">
                                 <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
@@ -484,6 +504,22 @@ function Transfer() {
 
                                     <span className="font-bold text-green-600">
                                         ₹{successAmount.toLocaleString("en-IN")}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Date & Time</span>
+
+                                    <span className="font-semibold">
+                                        {transactionTime}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">
+                                        Transaction ID
+                                    </span>
+
+                                    <span className="font-semibold font-mono">
+                                        #{transactionId.slice(-8)}
                                     </span>
                                 </div>
 
