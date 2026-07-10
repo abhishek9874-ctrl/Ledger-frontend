@@ -124,15 +124,20 @@ function SideBar() {
               Transfer
             </NavLink>
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
-              <FileText size={20} />
-              Reports
-            </button>
+           
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100">
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                  ? "bg-blue-50 text-blue-600 font-medium"
+                  : "hover:bg-gray-100"
+                }`
+              }
+            >
               <User size={20} />
               Profile
-            </button>
+            </NavLink>
 
           </div>
         </div>

@@ -12,6 +12,7 @@ import Accounts from './pages/Accounts'
 import ViewDetails from './pages/ViewDetails'
 import Transactions from './pages/Transactions'
 import Transfer from './pages/Transfer'
+import Profile from './pages/Profile'
 
 
 
@@ -29,6 +30,7 @@ function App() {
       <Route path='/viewdetails/:accountId' element={<ViewDetails/>}/>
       <Route path='/transactions'  element={<Transactions/>}/>
       <Route path='/transfer' element={<Transfer/>}/>
+      <Route path='/profile' element={<Profile/>}/>
     </Routes>
   )
 }
