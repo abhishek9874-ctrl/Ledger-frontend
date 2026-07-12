@@ -11,7 +11,32 @@ function Dashboard() {
     const [totalBalance, setTotalBalance] = useState(0);
 
     const [transactions, setTransactions] = useState([]);
-    
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const response = await axios.get(
+                    "http://localhost:3000/api/account/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                setUser(response.data.account.user);
+
+            } catch (err) {
+                console.log(err.response?.data);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
@@ -243,32 +268,32 @@ function Dashboard() {
                         </div>
 
                         <div className="space-y-5">
-                            {transactions.map((transaction)=>(
-                                 <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
-                                <div>
-                                    <h3 className="font-semibold">
-                                        Transaction
-                                    </h3>
+                            {transactions.map((transaction) => (
+                                <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            Transaction
+                                        </h3>
 
-                                    <p className="text-sm text-gray-500">
-                                        {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
-                                    </p>
+                                        <p className="text-sm text-gray-500">
+                                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                                        </p>
+                                    </div>
+
+                                    <span className="text-green-600 font-bold">
+                                        ₹{transaction.amount.toLocaleString("en-IN")}
+                                    </span>
                                 </div>
-
-                                <span className="text-green-600 font-bold">
-                                     ₹{transaction.amount.toLocaleString("en-IN")}
-                                </span>
-                            </div>
                             ))}
 
                             {/* Transaction */}
-                           
+
 
                             {/* Transaction */}
-                            
+
 
                             {/* Transaction */}
-                            
+
 
                             <div className="text-center pt-2">
                                 <button className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700">

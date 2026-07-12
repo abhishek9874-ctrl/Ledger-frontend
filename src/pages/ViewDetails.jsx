@@ -3,7 +3,6 @@ import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { Info } from "lucide-react";
 import { Wallet } from "lucide-react";
-const user = JSON.parse(localStorage.getItem("user"));
 import {
     IdCard,
     IndianRupee,
@@ -24,6 +23,34 @@ function ViewDetails() {
     const [totalCredits, setTotalCredits] = useState(0);
     const [totalDebits, setTotalDebits] = useState(0);
 
+
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const response = await axios.get(
+                    "http://localhost:3000/api/account/profile",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                setUser(response.data.account.user);
+
+            } catch (err) {
+                console.log(err.response?.data);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
@@ -39,11 +66,11 @@ function ViewDetails() {
                 );
                 setAccounts(response.data.accounts);
 
-                 const accountId = response.data.accounts[0]._id;
+                const accountId = response.data.accounts[0]._id;
 
                 if (response.data.accounts.length > 0) {
 
-                   
+
 
                     const balanceResponse = await axios.get(
                         `http://localhost:3000/api/account/balance/${accountId}`,

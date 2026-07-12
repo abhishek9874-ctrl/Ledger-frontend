@@ -2,28 +2,53 @@ import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-const user = JSON.parse(localStorage.getItem("user"));
 
 function Header() {
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(
+          "http://localhost:3000/api/account/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setUser(response.data.account.user);
+
+      } catch (err) {
+        console.log(err.response?.data);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
 
 
-  const location=useLocation();
+
+  const location = useLocation();
   const pageTitle =
-  location.pathname === "/dashboard"
-    ? "Dashboard"
-    : location.pathname === "/accounts"
-    ? "Accounts"
-    : location.pathname === "/transactions"
-    ? "Transactions"
-    : location.pathname.startsWith("/viewdetails")
-    ?"Account Details"
-    : location.pathname ==="/transfer"
-    ? "Tranfer Money"
-    : location.pathname==="/profile"
-    ?"Profile"
-    : "Backend Ledger";
+    location.pathname === "/dashboard"
+      ? "Dashboard"
+      : location.pathname === "/accounts"
+        ? "Accounts"
+        : location.pathname === "/transactions"
+          ? "Transactions"
+          : location.pathname.startsWith("/viewdetails")
+            ? "Account Details"
+            : location.pathname === "/transfer"
+              ? "Tranfer Money"
+              : location.pathname === "/profile"
+                ? "Profile"
+                : "Backend Ledger";
   return (
     <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
 

@@ -5,12 +5,15 @@ import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { Mail, CreditCard, ShieldCheck, CalendarDays, Clock3, UserRound, Pencil, Lock } from "lucide-react";
 import EditProfileModal from "../components/EditProfileModal";
+import ChangedPasswordModal from '../components/changedPasswordModal';
+import { AnimatePresence } from "framer-motion";
 
 function Profile() {
 
 
     const [profile, setProfile] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
 
 
@@ -49,7 +52,7 @@ function Profile() {
             <div className='flex-1 bg-gray-50'>
                 <Header />
                 <div className="max-w-5xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
-                    <div className="bg-white  rounded-3xl shadow-sm border border-gray-100 p-8">
+                    <div className="bg-white  rounded-3xl shadow-sm border hover:shadow-lg transition-all duration-300 border-gray-100 p-8">
 
                         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-10 lg:gap-20">
 
@@ -90,7 +93,7 @@ function Profile() {
                                     </div>
 
                                     <span className="inline-block mt-2 px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm font-medium">
-                                        Premium User
+                                        Verified User
                                     </span>
 
                                     <div className="mt-5 space-y-4">
@@ -199,7 +202,7 @@ function Profile() {
 
                             <button
                                 onClick={() => setShowEditModal(true)}
-                                className="w-full sm:w-auto px-8 py-3 border-2 border-blue-500 rounded-xl text-blue-600 font-semibold flex items-center gap-2 hover:bg-blue-50 transition">
+                                className="w-full sm:w-auto px-8 py-3 border-2 border-blue-500 rounded-xl text-blue-600 font-semibold flex items-center gap-2 hover:bg-blue-50 hover:scale-[1.01] transition-all duration-300 ">
 
                                 <Pencil size={18} />
 
@@ -207,7 +210,9 @@ function Profile() {
 
                             </button>
 
-                            <button className="w-full sm:w-auto px-8 py-3 border-2 border-purple-500 rounded-xl text-purple-600 font-semibold flex items-center gap-2 hover:bg-purple-50 transition">
+                            <button
+                            onClick={()=>setShowChangePasswordModal(true)}
+                             className="w-full sm:w-auto px-8 py-3 border-2 border-purple-500 rounded-xl text-purple-600 font-semibold flex items-center gap-2 hover:bg-purple-50 hover:scale-[1.01] transition-all duration-300 ">
 
                                 <Lock size={18} />
 
@@ -220,14 +225,23 @@ function Profile() {
                     </div>
                 </div>
             </div>
-            {
-                showEditModal && (
+            <AnimatePresence>
+                {showEditModal && (
                     <EditProfileModal
                         profile={profile}
+                        fetchProfile={fetchProfile}
                         onClose={() => setShowEditModal(false)}
                     />
-                )
-            }
+                )}
+            </AnimatePresence>
+            <AnimatePresence>
+                {showChangePasswordModal && (
+                    <ChangedPasswordModal
+                    profile={profile}
+                    onClose={()=>setShowChangePasswordModal(false)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
 
     )

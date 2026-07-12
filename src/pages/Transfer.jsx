@@ -332,7 +332,7 @@ function Transfer() {
                                                     className="w-full px-5 py-4 text-left hover:bg-gray-100 transition"
                                                 >
                                                     <h3 className="font-semibold">
-                                                        {account.user.name}
+                                                        {account?.user?.name}
                                                     </h3>
 
                                                     <p className="text-sm text-gray-500">
@@ -540,5 +540,4 @@ function Transfer() {
         </div>
     )
 }
-
 export default Transfer
