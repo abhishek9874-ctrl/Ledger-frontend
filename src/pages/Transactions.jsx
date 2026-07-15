@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
-import { ArrowDown, ArrowUp, ArrowLeftRight, Wallet, CalendarDays, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowLeftRight, Wallet, CalendarDays, Search, ReceiptText } from "lucide-react";
 import axios from 'axios';
+import TransactionDetailsModal from '../components/TransactionDetailsModal';
+import { AnimatePresence } from "framer-motion";
 
 
 function Transactions() {
@@ -15,6 +17,7 @@ function Transactions() {
   const [myAccountId, setMyAccountId] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [search, setSearch] = useState("");
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
 
   useEffect(() => {
@@ -322,93 +325,108 @@ function Transactions() {
                   <p>Status</p>
 
                 </div>
+                {
+                  transactions.length === 0
+                    ? (<div className="flex flex-col items-center justify-center py-16 text-center">
+                      <ReceiptText size={52} className="text-gray-300 mb-4" />
 
-                {filteredTransactions.map((transaction) => {
-                  const isCredit = transaction.toAccount._id === myAccountId;
-                  return (
-                    <div>
-                      <div key={transaction._id} className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
+                      <h3 className="text-xl font-semibold text-gray-700">
+                        No recent transactions
+                      </h3>
 
-                        {/* Date */}
+                      <p className="text-gray-500 mt-2">
+                        Your recent transfers will appear here.
+                      </p>
+                    </div>):
+                (filteredTransactions.map((transaction) => {
+                      const isCredit = transaction.toAccount._id === myAccountId;
+                      return (
                         <div>
-                          <p className="font-medium">
-                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
-                          </p>
+                          <div
+                            onClick={() => setSelectedTransaction(transaction)}
+                            key={transaction._id} className="grid grid-cols-5 items-center px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition">
 
-                          <p className="text-sm text-gray-500">
-                            {new Date(transaction.createdAt).toLocaleTimeString("en-IN")}
-                          </p>
+                            {/* Date */}
+                            <div>
+                              <p className="font-medium">
+                                {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                              </p>
+
+                              <p className="text-sm text-gray-500">
+                                {new Date(transaction.createdAt).toLocaleTimeString("en-IN")}
+                              </p>
+                            </div>
+
+                            {/* Type */}
+                            <div className="flex items-center gap-2">
+
+                              {isCredit ? (
+                                <ArrowDown className="text-green-600" size={20} />
+                              ) : (
+                                <ArrowUp className="text-red-600" size={20} />
+                              )}
+
+                              <span className={
+                                isCredit ?
+                                  "text-green-600 font-medium"
+                                  : "text-red-600 font-medium"
+                              }>
+                                {isCredit ?
+                                  "CREDIT" : "DEBIT"}
+                              </span>
+
+                            </div>
+
+                            {/* Counterparty */}
+                            <div>
+
+                              <p className="font-medium">
+                                {isCredit
+                                  ? transaction.fromAccount.user.name
+                                  : transaction.toAccount.user.name}
+                              </p>
+
+                              <p className="text-sm text-gray-500">
+                                ****
+                                {(isCredit
+                                  ? transaction.fromAccount._id
+                                  : transaction.toAccount._id
+                                ).slice(-6)}
+                              </p>
+
+                            </div>
+
+                            {/* Amount */}
+                            <div
+                              className={`font-bold ${isCredit ? "text-green-600" : "text-red-600"
+                                }`}
+                            >
+                              {isCredit ? "+" : "-"}₹{transaction.amount.toLocaleString("en-IN")}
+                            </div>
+
+                            {/* Status */}
+                            <div>
+
+                              <span
+                                className={`px-4 py-2 rounded-xl text-sm font-medium ${transaction.status === "COMPLETED"
+                                  ? "bg-green-100 text-green-700"
+                                  : transaction.status === "PENDING"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : transaction.status === "FAILED"
+                                      ? "bg-red-100 text-red-700"
+                                      : "bg-gray-100 text-gray-700"
+                                  }`}
+                              >
+                                {transaction.status}
+                              </span>
+
+                            </div>
+
+                          </div>
                         </div>
-
-                        {/* Type */}
-                        <div className="flex items-center gap-2">
-
-                          {isCredit ? (
-                            <ArrowDown className="text-green-600" size={20} />
-                          ) : (
-                            <ArrowUp className="text-red-600" size={20} />
-                          )}
-
-                          <span className={
-                            isCredit ?
-                              "text-green-600 font-medium"
-                              : "text-red-600 font-medium"
-                          }>
-                            {isCredit ?
-                              "CREDIT" : "DEBIT"}
-                          </span>
-
-                        </div>
-
-                        {/* Counterparty */}
-                        <div>
-
-                          <p className="font-medium">
-                            {isCredit
-                              ? transaction.fromAccount.user.name
-                              : transaction.toAccount.user.name}
-                          </p>
-
-                          <p className="text-sm text-gray-500">
-                            ****
-                            {(isCredit
-                              ? transaction.fromAccount._id
-                              : transaction.toAccount._id
-                            ).slice(-6)}
-                          </p>
-
-                        </div>
-
-                        {/* Amount */}
-                        <div
-                          className={`font-bold ${isCredit ? "text-green-600" : "text-red-600"
-                            }`}
-                        >
-                          {isCredit ? "+" : "-"}₹{transaction.amount.toLocaleString("en-IN")}
-                        </div>
-
-                        {/* Status */}
-                        <div>
-
-                          <span
-                            className={`px-4 py-2 rounded-xl text-sm font-medium ${transaction.status === "COMPLETED"
-                              ? "bg-green-100 text-green-700"
-                              : transaction.status === "PENDING"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : transaction.status === "FAILED"
-                                  ? "bg-red-100 text-red-700"
-                                  : "bg-gray-100 text-gray-700"
-                              }`}
-                          >
-                            {transaction.status}
-                          </span>
-
-                        </div>
-
-                      </div>
-                    </div>
-                  )
-                })}
+                      )
+                    }))
+              }
 
               </div>
 
@@ -419,6 +437,17 @@ function Transactions() {
         </div>
 
       </div>
+      <AnimatePresence>
+        {
+          selectedTransaction && (
+            <TransactionDetailsModal
+              transaction={selectedTransaction}
+              myAccountId={myAccountId}
+              onClose={() => setSelectedTransaction(null)}
+            />
+          )
+        }
+      </AnimatePresence>
     </div>
   )
 }

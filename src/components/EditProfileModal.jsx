@@ -10,9 +10,14 @@ function EditProfileModal({ profile, onClose, fetchProfile }) {
   const [name, setName] = useState(profile?.user?.name || "");
   const [email, setEmail] = useState(profile?.user?.email || "");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
 
   const handleSave = async () => {
     try {
+      setError("");
+      setSuccess("");
       setLoading(true);
 
       const token = localStorage.getItem("token");
@@ -32,12 +37,12 @@ function EditProfileModal({ profile, onClose, fetchProfile }) {
 
       await fetchProfile();
 
-      alert("Profile updated successfully!");
+      setSuccess("Profile updated successfully!");
 
       onClose();
 
     } catch (err) {
-      console.log(err.response?.data);
+      setError(err.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -84,6 +89,20 @@ function EditProfileModal({ profile, onClose, fetchProfile }) {
             <p className="text-gray-500 mt-2">
               Update your personal information
             </p>
+            {/* Success Message */}
+            {success && (
+              <div className="mt-4 rounded-xl bg-green-50 border border-green-200 p-3 text-green-700">
+                {success}
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-3 text-red-700">
+                {error}
+              </div>
+            )}
+
 
           </div>
 

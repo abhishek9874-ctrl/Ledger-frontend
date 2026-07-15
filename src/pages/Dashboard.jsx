@@ -3,15 +3,20 @@ import axios from 'axios';
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 const user = JSON.parse(localStorage.getItem("user"));
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff,ReceiptText } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 function Dashboard() {
     const [showBalance, setShowBalance] = useState(false);
     const [accounts, setAccounts] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
+    const [myAccountId, setMyAccountId] = useState(null)
 
     const [transactions, setTransactions] = useState([]);
     const [user, setUser] = useState(null);
+
+
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -56,6 +61,7 @@ function Dashboard() {
 
 
                 const accountId = response.data.accounts[0]._id;
+                setMyAccountId(accountId)
 
                 const balanceResponse = await axios.get(
                     `http://localhost:3000/api/account/balance/${accountId}`,
@@ -78,6 +84,10 @@ function Dashboard() {
                 );
 
                 setTransactions(transactionResponse.data.transactions);
+
+
+
+
             } catch (error) {
                 console.log(error.response?.data);
             }
@@ -85,6 +95,9 @@ function Dashboard() {
 
         fetchAccounts();
     }, []);
+    console.log(transactions)
+
+
 
     return (
         <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
@@ -131,9 +144,7 @@ function Dashboard() {
                                             : "XXXXXX.XX"}
                                     </h2>
 
-                                    <p className="text-sm text-gray-400 mt-1">
-                                        Across all accounts
-                                    </p>
+
                                 </div>
 
                             </div>
@@ -174,15 +185,15 @@ function Dashboard() {
 
                                 <div>
                                     <p className="text-sm text-gray-500">
-                                        Active Accounts
+                                        Account Number
                                     </p>
 
                                     <h2 className="text-3xl font-bold text-slate-900 mt-1">
-                                        {accounts.length}
+                                        *****{myAccountId?.slice(-6).toUpperCase()}
                                     </h2>
 
                                     <p className="text-sm text-gray-400 mt-1">
-                                        Total active accounts
+                                        Primary Account
                                     </p>
                                 </div>
 
@@ -199,9 +210,7 @@ function Dashboard() {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold">My Accounts</h2>
 
-                            <button className="text-blue-600 font-medium transition-all duration-300 hover:text-blue-800">
-                                View All
-                            </button>
+
                         </div>
 
                         <div className="space-y-4">
@@ -239,18 +248,19 @@ function Dashboard() {
                                             {account.status}
                                         </span>
 
-                                        <h3 className="font-bold text-lg mt-2 text-gray-500">
-                                            Click to View
-                                        </h3>
+
+
                                     </div>
                                 </div>
                             ))}
 
-                            <button
-                                className="w-full border border-gray-200 rounded-2xl py-4 text-blue-600 font-semibold hover:bg-blue-50 transition"
-                            >
-                                + Add Account
-                            </button>
+                            <Link to={"/accounts"}>
+                                <button
+                                    className="w-full border border-gray-200 rounded-2xl py-4 text-blue-600 font-semibold hover:bg-blue-50 transition"
+                                >
+                                    Manage Account
+                                </button>
+                            </Link>
 
                         </div>
                     </div>
@@ -262,43 +272,57 @@ function Dashboard() {
                                 Recent Transactions
                             </h2>
 
-                            <button className="text-blue-600 cursor-pointer font-medium hover:text-blue-700">
-                                View All
-                            </button>
+
                         </div>
 
                         <div className="space-y-5">
-                            {transactions.map((transaction) => (
-                                <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
-                                    <div>
-                                        <h3 className="font-semibold">
-                                            Transaction
-                                        </h3>
+                            {transactions.length === 0
+                                ? (<div className="flex flex-col items-center justify-center py-16 text-center">
+                                    <ReceiptText size={52} className="text-gray-300 mb-4" />
 
-                                        <p className="text-sm text-gray-500">
-                                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
-                                        </p>
-                                    </div>
+                                    <h3 className="text-xl font-semibold text-gray-700">
+                                        No recent transactions
+                                    </h3>
 
-                                    <span className="text-green-600 font-bold">
-                                        ₹{transaction.amount.toLocaleString("en-IN")}
-                                    </span>
-                                </div>
-                            ))}
-
-                            {/* Transaction */}
+                                    <p className="text-gray-500 mt-2">
+                                        Your recent transfers will appear here.
+                                    </p>
+                                </div>) : (
+                                    
+                                        transactions.map((transaction) => {
+                                            const isDebit = transaction.fromAccount._id === myAccountId;
 
 
-                            {/* Transaction */}
+                                            return (
+                                                <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
+                                                    <div>
+                                                        <h3 className="font-semibold">
+                                                            {isDebit
+                                                                ? `Sent to ${transaction.toAccount.user.name}`
+                                                                : `Received from ${transaction.fromAccount.user.name}`}
+                                                        </h3>
 
+                                                        <p className="text-sm text-gray-500">
+                                                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                                                        </p>
+                                                    </div>
 
-                            {/* Transaction */}
+                                                    <span className={`${isDebit ? "text-red-600" : "text-green-600"} font-bold`}>
+                                                        {isDebit ? "-" : "+"}₹{transaction.amount.toLocaleString("en-IN")}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })
+                                    
+                                )}
 
 
                             <div className="text-center pt-2">
-                                <button className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700">
-                                    View More →
-                                </button>
+                                <Link to={"/transactions"}>
+                                    <button className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700">
+                                        View More →
+                                    </button>
+                                </Link>
                             </div>
 
                         </div>

@@ -8,6 +8,9 @@ function ChangedPasswordModal({ onClose }) {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [currentPasswordError, setCurrentPasswordError] = useState("");
+    const [newPasswordError, setNewPasswordError] = useState("");
+    const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
@@ -17,13 +20,32 @@ function ChangedPasswordModal({ onClose }) {
 
     const handleChangePassword = async () => {
         try {
+            setCurrentPasswordError("");
+            setNewPasswordError("");
+            setConfirmPasswordError("");
 
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                return alert("Please fill all fields.");
+            let hasError = false;
+
+            if (!currentPassword) {
+                setCurrentPasswordError("Current password is required.");
+                hasError = true;
             }
 
+            if (!newPassword) {
+                setNewPasswordError("New password is required.");
+                hasError = true;
+            }
+
+            if (!confirmPassword) {
+                setConfirmPasswordError("Please confirm your new password.");
+                hasError = true;
+            }
+
+            if (hasError) return;
+
             if (newPassword !== confirmPassword) {
-                return alert("Passwords do not match.");
+                setConfirmPasswordError("Passwords do not match.");
+                return;
             }
 
             const token = localStorage.getItem("token");
@@ -49,7 +71,19 @@ function ChangedPasswordModal({ onClose }) {
             onClose();
 
         } catch (err) {
-            alert(err.response?.data?.message);
+
+            const message = err.response?.data?.message;
+
+            if (message === "Current password is incorrect") {
+                setCurrentPasswordError(message);
+            }
+            else if (message === "New password must be different from the current password") {
+                setNewPasswordError(message);
+            }
+            else {
+                setNewPasswordError(message || "Something went wrong.");
+            }
+
         }
     };
 
@@ -116,8 +150,14 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
+                        
 
                     </div>
+                    {currentPasswordError && (
+                            <p className="mt-2 text-sm text-red-600">
+                                {currentPasswordError}
+                            </p>
+                        )}
 
                     <p className="text-sm text-gray-500 mt-3">
                         Enter your current account password.
@@ -148,8 +188,14 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
+                        
 
                     </div>
+                    {newPasswordError && (
+                            <p className="mt-2 text-sm text-red-600">
+                                {newPasswordError}
+                            </p>
+                        )}
 
                     <p className="text-sm text-gray-500 mt-3">
                         Password must contain at least 6 characters.
@@ -183,8 +229,14 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
-
+                        
                     </div>
+                    {confirmPasswordError && (
+                            <p className="mt-2 text-sm text-red-600">
+                                {confirmPasswordError}
+                            </p>
+                        )}
+
 
                     <p className="text-sm text-gray-500 mt-3">
                         Re-enter your new password to confirm.
