@@ -18,6 +18,7 @@ function Transactions() {
   const [filter, setFilter] = useState("ALL");
   const [search, setSearch] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
 
 
   useEffect(() => {
@@ -108,12 +109,19 @@ function Transactions() {
       .toLowerCase()
       .includes(search.toLowerCase());
 
+      const transactionDate = new Date(transaction.createdAt)
+    .toISOString()
+    .split("T")[0];
+
+const matchesDate =
+    !selectedDate || transactionDate === selectedDate;
+
     // Credit / Debit filter
     if (filter === "CREDIT" && !isCredit) return false;
     if (filter === "DEBIT" && isCredit) return false;
 
     // Search filter
-    return matchesSearch;
+    return matchesSearch && matchesDate;
   });
 
   return (
@@ -259,32 +267,16 @@ function Transactions() {
             <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
 
               {/* Date Filter */}
-              <button className="flex items-center justify-between gap-3 border border-gray-200 rounded-xl px-5 py-3 w-full md:w-[250px] hover:border-blue-500 transition">
+              <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-5 py-3 w-full md:w-[250px] hover:border-blue-500 transition">
+                <CalendarDays size={20} className="text-gray-500" />
 
-                <div className="flex items-center gap-3">
-                  <CalendarDays size={20} className="text-gray-500" />
-
-                  <span className="text-gray-600">
-                    Select Date
-                  </span>
-                </div>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-
-              </button>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full outline-none bg-transparent text-gray-600"
+                />
+              </div>
 
               {/* Search */}
               <div className="flex items-center gap-3 border border-gray-200 rounded-xl px-4 py-3 w-full md:w-[280px]">
@@ -337,8 +329,8 @@ function Transactions() {
                       <p className="text-gray-500 mt-2">
                         Your recent transfers will appear here.
                       </p>
-                    </div>):
-                (filteredTransactions.map((transaction) => {
+                    </div>) :
+                    (filteredTransactions.map((transaction) => {
                       const isCredit = transaction.toAccount._id === myAccountId;
                       return (
                         <div>
@@ -426,7 +418,7 @@ function Transactions() {
                         </div>
                       )
                     }))
-              }
+                }
 
               </div>
 

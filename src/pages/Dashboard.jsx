@@ -3,7 +3,7 @@ import axios from 'axios';
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 const user = JSON.parse(localStorage.getItem("user"));
-import { Eye, EyeOff,ReceiptText } from "lucide-react";
+import { Eye, EyeOff, ReceiptText } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 function Dashboard() {
@@ -11,7 +11,7 @@ function Dashboard() {
     const [accounts, setAccounts] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
     const [myAccountId, setMyAccountId] = useState(null)
-
+    const [monthlyExpense, setMonthlyExpense] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [user, setUser] = useState(null);
 
@@ -84,6 +84,26 @@ function Dashboard() {
                 );
 
                 setTransactions(transactionResponse.data.transactions);
+
+                const ledgerResponse = await axios.get(
+                    `http://localhost:3000/api/ledger/${accountId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+
+                const monthlyExpense = ledgerResponse.data.entries.filter((entry) => {
+                    const transactionDate = new Date(entry.createdAt);
+                    return (
+                        entry.type === "DEBIT" &&
+                        transactionDate.getMonth() === currentMonth &&
+                        transactionDate.getFullYear() === currentYear
+                    );
+                });
 
 
 
@@ -288,32 +308,32 @@ function Dashboard() {
                                         Your recent transfers will appear here.
                                     </p>
                                 </div>) : (
-                                    
-                                        transactions.map((transaction) => {
-                                            const isDebit = transaction.fromAccount._id === myAccountId;
+
+                                    transactions.map((transaction) => {
+                                        const isDebit = transaction.fromAccount._id === myAccountId;
 
 
-                                            return (
-                                                <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
-                                                    <div>
-                                                        <h3 className="font-semibold">
-                                                            {isDebit
-                                                                ? `Sent to ${transaction.toAccount.user.name}`
-                                                                : `Received from ${transaction.fromAccount.user.name}`}
-                                                        </h3>
+                                        return (
+                                            <div key={transaction._id} className="flex justify-between items-center border-b border-gray-200 pb-4">
+                                                <div>
+                                                    <h3 className="font-semibold">
+                                                        {isDebit
+                                                            ? `Sent to ${transaction.toAccount.user.name}`
+                                                            : `Received from ${transaction.fromAccount.user.name}`}
+                                                    </h3>
 
-                                                        <p className="text-sm text-gray-500">
-                                                            {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
-                                                        </p>
-                                                    </div>
-
-                                                    <span className={`${isDebit ? "text-red-600" : "text-green-600"} font-bold`}>
-                                                        {isDebit ? "-" : "+"}₹{transaction.amount.toLocaleString("en-IN")}
-                                                    </span>
+                                                    <p className="text-sm text-gray-500">
+                                                        {new Date(transaction.createdAt).toLocaleDateString("en-IN")}
+                                                    </p>
                                                 </div>
-                                            )
-                                        })
-                                    
+
+                                                <span className={`${isDebit ? "text-red-600" : "text-green-600"} font-bold`}>
+                                                    {isDebit ? "-" : "+"}₹{transaction.amount.toLocaleString("en-IN")}
+                                                </span>
+                                            </div>
+                                        )
+                                    })
+
                                 )}
 
 
