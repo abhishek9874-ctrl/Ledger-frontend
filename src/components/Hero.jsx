@@ -1,6 +1,8 @@
 import React from 'react'
 import { FaArrowRight } from "react-icons/fa";
 import { BiChevronDown } from 'react-icons/bi';
+import ProtectedRoute from './ProtectedRoute';
+import { Link } from 'react-router-dom';
 
 
 function Hero() {
@@ -13,7 +15,11 @@ function Hero() {
                         track transactions and keep your finances in
                         control <br /> with complete transparency.</p>
                     <div className='mt-7 flex flex-col md:flex-row items-center gap-3 font-medium'>
-                        <button className='group border-blue-600 border-2 bg-blue-600 px-8 py-3 text-white rounded-lg flex items-center gap-2 hover:bg-white cursor-pointer hover:text-blue-600 transition-all duration-300'>Get Started <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></button>
+                  
+                          <Link to={"/dashboard"}>
+                          <button className='group border-blue-600 border-2 bg-blue-600 px-8 py-3 text-white rounded-lg flex items-center gap-2 hover:bg-white cursor-pointer hover:text-blue-600 transition-all duration-300'>Get Started <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></button>
+                          </Link>
+            
                         <button className='text-blue-600 px-7 py-3 cursor-pointer border-blue-300 border-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300'>Learn More</button>
                     </div>
                 </div>

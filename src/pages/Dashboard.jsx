@@ -104,6 +104,11 @@ function Dashboard() {
                         transactionDate.getFullYear() === currentYear
                     );
                 });
+                const expense = monthlyExpense.reduce((sum, entry) => {
+                    return sum + entry.amount;
+                }, 0);
+
+                setMonthlyExpense(expense);
 
 
 
@@ -184,7 +189,7 @@ function Dashboard() {
                                     </p>
 
                                     <h2 className="text-3xl font-bold text-slate-900 mt-1">
-                                        ₹12,500
+                                        ₹{monthlyExpense.toLocaleString("en-IN")}
                                     </h2>
 
                                     <p className="text-sm text-gray-400 mt-1">

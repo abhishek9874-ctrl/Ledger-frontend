@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -13,24 +12,57 @@ import ViewDetails from './pages/ViewDetails'
 import Transactions from './pages/Transactions'
 import Transfer from './pages/Transfer'
 import Profile from './pages/Profile'
+import ProtectedRoute from './components/ProtectedRoute'
+import About from './pages/About'
 
 
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <Routes>
-      <Route  path='/' element={<Home/>}/>
-      <Route path='/register' element={<Register/>}/>
-      <Route path='/login' element={<Login/>}/>
-      <Route path='/createAccount' element={<CreateAccount/>}/>
-      <Route path='/dashboard' element={<Dashboard/>}/>
-      <Route path='/accounts' element={<Accounts/>}/>
-      <Route path='/viewdetails/:accountId' element={<ViewDetails/>}/>
-      <Route path='/transactions'  element={<Transactions/>}/>
-      <Route path='/transfer' element={<Transfer/>}/>
-      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/' element={<Home />} />
+      <Route path='/register' element={<Register />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/createAccount' element={<CreateAccount />} />
+      <Route path='/dashboard' element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      }
+      />
+      <Route path='/accounts' element={
+        <ProtectedRoute>
+          <Accounts />
+        </ProtectedRoute>
+      } />
+      <Route
+        path="/viewdetails/:accountId"
+        element={
+          <ProtectedRoute>
+            <ViewDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route path='/transactions' element={
+        <ProtectedRoute><Transactions /> </ProtectedRoute>} />
+      <Route
+        path="/transfer"
+        element={
+          <ProtectedRoute>
+            <Transfer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route path='/about' element={<About/>}/>
     </Routes>
   )
 }
