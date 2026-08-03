@@ -13,7 +13,9 @@ function Login() {
         email: "",
         password: ""
     })
+    const [error, setError] = useState("");
     const handleChange = (e) => {
+        setError("");
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -22,6 +24,7 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
             const response = await axios.post(
                 "http://localhost:3000/api/auth/login", formData
@@ -36,7 +39,9 @@ function Login() {
             console.log(response.data)
             navigate("/dashboard")
         } catch (err) {
-            console.log(err.response?.data)
+            setError(
+                err.response?.data?.message || "Something went wrong. Please try again."
+            );
         }
     }
 
@@ -182,11 +187,17 @@ function Login() {
                                     <IoEyeOutline className="text-gray-400 cursor-pointer" />
                                 </div>
                             </div>
+
                             <div className="text-right mt-2">
                                 <button className="text-blue-600 text-sm cursor-pointer hover:underline">
                                     Forgot Password?
                                 </button>
                             </div>
+                            {error && (
+                                <p className="mt-2 text-sm text-red-600">
+                                    {error}
+                                </p>
+                            )}
 
 
 
@@ -199,6 +210,7 @@ function Login() {
                             </button>
 
                             {/* Divider */}
+                            
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 h-px bg-gray-300"></div>
 

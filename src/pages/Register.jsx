@@ -9,14 +9,16 @@ import { useNavigate } from "react-router-dom";
 
 
 function Register() {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
     });
+    const [error, setError] = useState("");
     const handleChange = (e) => {
+        setError("");
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
@@ -25,9 +27,10 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
         try {
-            const response=await axios.post(
-                "http://localhost:3000/api/auth/register",formData
+            const response = await axios.post(
+                "http://localhost:3000/api/auth/register", formData
             );
             localStorage.setItem("token", response.data.token);
 
@@ -35,7 +38,9 @@ function Register() {
 
             navigate("/createAccount")
         } catch (err) {
-            console.log(err.response?.data);
+            setError(
+                err.response?.data?.message || "Something went wrong. Please try again."
+            );
         }
     }
     return (
@@ -215,14 +220,19 @@ function Register() {
                             </div>
 
                             {/* Button */}
-                            
-                                 <button
+                            {error && (
+                                <p className="mt-2 text-sm text-red-600">
+                                    {error}
+                                </p>
+                            )}
+
+                            <button
                                 type="submit"
                                 className="w-full bg-blue-600 text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition"
                             >
                                 Register
                             </button>
-                        
+
 
                             {/* Divider */}
                             <div className="flex items-center gap-4">
