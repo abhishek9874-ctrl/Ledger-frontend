@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-    Wallet,
-    ArrowLeftRight,
-    PieChart,
-    ShieldCheck,
-} from "lucide-react";
+import {Wallet,ArrowLeftRight,PieChart,ShieldCheck,} from "lucide-react";
 
 function Features() {
 

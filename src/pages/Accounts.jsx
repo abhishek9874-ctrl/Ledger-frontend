@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
-import axios from "axios";
+import api from "../api/axios"
 import { Link } from 'react-router-dom';
 import {
     Landmark,
@@ -17,15 +17,9 @@ function Accounts() {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
-                const token = localStorage.getItem("token");
 
-                const response = await axios.get(
-                    `http://localhost:3000/api/account`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                const response = await api.get(
+                    `/account`
                 );
 
                 setAccounts(response.data.accounts);
@@ -34,13 +28,8 @@ function Accounts() {
 
                     const accountId = response.data.accounts[0]._id;
 
-                    const balanceResponse = await axios.get(
-                        `http://localhost:3000/api/account/balance/${accountId}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
+                    const balanceResponse = await api.get(
+                        `/account/balance/${accountId}`
                     );
 
                     setTotalBalance(balanceResponse.data.balance);

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import axios from "axios"
+import api from "../api/axios"
 import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 
@@ -16,6 +16,7 @@ function Register() {
         email: "",
         password: "",
     });
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const handleChange = (e) => {
         setError("");
@@ -28,13 +29,16 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        if (formData.password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
         try {
-            const response = await axios.post(
-                "http://localhost:3000/api/auth/register", formData
+            const response = await api.post(
+                "/auth/register", formData
             );
             localStorage.setItem("token", response.data.token);
 
-            console.log(response.data)
 
             navigate("/createAccount")
         } catch (err) {
@@ -212,6 +216,7 @@ function Register() {
                                     <input
                                         type="password"
                                         name="confirmPassword"
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
                                         placeholder="Confirm your password"
                                         className="w-full outline-none"
                                     />

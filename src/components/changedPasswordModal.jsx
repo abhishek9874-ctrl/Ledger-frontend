@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { X, Lock, Eye, EyeOff, Save } from "lucide-react";
-import axios from "axios";
+import api from "../api/axios";
 
 function ChangedPasswordModal({ onClose }) {
 
@@ -42,24 +42,22 @@ function ChangedPasswordModal({ onClose }) {
             }
 
             if (hasError) return;
+            if (newPassword.length < 6) {
+                setNewPasswordError("Password must contain at least 6 characters.");
+                return;
+            }
 
             if (newPassword !== confirmPassword) {
                 setConfirmPasswordError("Passwords do not match.");
                 return;
             }
 
-            const token = localStorage.getItem("token");
 
-            const response = await axios.put(
-                "http://localhost:3000/api/auth/changedPassword",
+            const response = await api.put(
+                "/auth/changedPassword",
                 {
                     currentPassword,
                     newPassword,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
 
@@ -150,14 +148,14 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
-                        
+
 
                     </div>
                     {currentPasswordError && (
-                            <p className="mt-2 text-sm text-red-600">
-                                {currentPasswordError}
-                            </p>
-                        )}
+                        <p className="mt-2 text-sm text-red-600">
+                            {currentPasswordError}
+                        </p>
+                    )}
 
                     <p className="text-sm text-gray-500 mt-3">
                         Enter your current account password.
@@ -188,14 +186,14 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
-                        
+
 
                     </div>
                     {newPasswordError && (
-                            <p className="mt-2 text-sm text-red-600">
-                                {newPasswordError}
-                            </p>
-                        )}
+                        <p className="mt-2 text-sm text-red-600">
+                            {newPasswordError}
+                        </p>
+                    )}
 
                     <p className="text-sm text-gray-500 mt-3">
                         Password must contain at least 6 characters.
@@ -229,13 +227,13 @@ function ChangedPasswordModal({ onClose }) {
                         >
                             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
-                        
+
                     </div>
                     {confirmPasswordError && (
-                            <p className="mt-2 text-sm text-red-600">
-                                {confirmPasswordError}
-                            </p>
-                        )}
+                        <p className="mt-2 text-sm text-red-600">
+                            {confirmPasswordError}
+                        </p>
+                    )}
 
 
                     <p className="text-sm text-gray-500 mt-3">

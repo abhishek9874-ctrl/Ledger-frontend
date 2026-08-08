@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import axios from 'axios';
+import api from "../api/axios"
 import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
-import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
-import { IoEyeOutline } from "react-icons/io5";
-import { Link, useNavigate } from 'react-router-dom';
+import { FaUser, } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 import { User } from "lucide-react";
 
 function CreateAccount() {
@@ -12,36 +11,31 @@ function CreateAccount() {
     const [formData, setFormData] = useState({
         user: ""
     })
+    const [error, setError] = useState("");
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
     };
-    console.log(formData);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem("token");
 
-            console.log("TOKEN:", token);
-            const response = await axios.post(
-                "http://localhost:3000/api/account", formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            await api.post(
+                "/account", formData
             )
 
-            console.log(response.data)
             navigate("/dashboard")
-            
+
         } catch (err) {
-            console.log(err.response?.data)
+            setError(
+                err.response?.data?.message ||
+                "Something went wrong. Please try again."
+            );
         }
     }
 
@@ -170,8 +164,15 @@ function CreateAccount() {
                                         placeholder="Enter your username"
                                         className="w-full outline-none"
                                     />
+                                    {error && (
+                                        <p className="text-red-500 text-sm mt-2">
+                                            {error}
+                                        </p>
+                                    )}
                                 </div>
+
                             </div>
+
 
                             {/* Password */}
 

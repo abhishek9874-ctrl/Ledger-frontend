@@ -2,18 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-import {
-  Landmark,
-  LayoutDashboard,
-  Wallet,
-  ArrowLeftRight,
-  Repeat,
-  FileText,
-  User,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
+import {Landmark,LayoutDashboard,Wallet,ArrowLeftRight,Repeat,FileText,User,LogOut,Menu,X,} from "lucide-react";
 
 function SideBar() {
   const [isOpen, setIsOpen] = useState(false);

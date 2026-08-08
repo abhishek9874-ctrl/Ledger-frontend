@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
-import { Info } from "lucide-react";
-import { Wallet } from "lucide-react";
-import {
-    IdCard,
-    IndianRupee,
-    Calendar,
-    ShieldCheck,
-    Clock3
-} from "lucide-react";
-import {
-    ArrowDown,
-    ArrowUp,
-    BarChart3
-} from "lucide-react";
-import axios from 'axios';
+import { IdCard, IndianRupee, Calendar, ShieldCheck, Clock3, ArrowDown, ArrowUp, BarChart3, Info, Wallet } from "lucide-react";
+import api from '../api/axios';
 
 function ViewDetails() {
     const [accounts, setAccounts] = useState([]);
@@ -30,15 +17,9 @@ function ViewDetails() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem("token");
 
-                const response = await axios.get(
-                    "http://localhost:3000/api/account/profile",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                const response = await api.get(
+                    "/account/profile",
                 );
 
                 setUser(response.data.account.user);
@@ -54,45 +35,30 @@ function ViewDetails() {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
-                const token = localStorage.getItem("token")
 
-                const response = await axios.get(
-                    `http://localhost:3000/api/account`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        },
-                    }
+                const response = await api.get(
+                    `/account`
                 );
                 setAccounts(response.data.accounts);
+                if (response.data.accounts.length === 0) {
+                    return;
+                }
 
                 const accountId = response.data.accounts[0]._id;
 
-                if (response.data.accounts.length > 0) {
 
 
 
-                    const balanceResponse = await axios.get(
-                        `http://localhost:3000/api/account/balance/${accountId}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
+                    const balanceResponse = await api.get(
+                        `/account/balance/${accountId}`,
                     );
 
                     setBalance(balanceResponse.data.balance);
-                }
-                const ledgerResponse = await axios.get(
-                    `http://localhost:3000/api/ledger/${accountId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+
+                const ledgerResponse = await api.get(
+                    `/ledger/${accountId}`
                 );
 
-                console.log(ledgerResponse.data);
                 const credits = ledgerResponse.data.entries
                     .filter(entry => entry.type === "CREDIT")
                     .reduce((sum, entry) => sum + entry.amount, 0);

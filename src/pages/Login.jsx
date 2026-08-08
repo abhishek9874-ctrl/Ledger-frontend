@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios';
+import api from '../api/axios';
 import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
@@ -26,8 +26,8 @@ function Login() {
         e.preventDefault();
         setError("");
         try {
-            const response = await axios.post(
-                "http://localhost:3000/api/auth/login", formData
+            const response = await api.post(
+                "/auth/login", formData
             )
             localStorage.setItem("token", response.data.token);
 
@@ -36,7 +36,6 @@ function Login() {
                 JSON.stringify(response.data.user)
             );
 
-            console.log(response.data)
             navigate("/dashboard")
         } catch (err) {
             setError(

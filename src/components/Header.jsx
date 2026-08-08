@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 
 function Header() {
 
@@ -10,15 +10,9 @@ function Header() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
 
-        const response = await axios.get(
-          "http://localhost:3000/api/account/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const response = await api.get(
+          "/account/profile",
         );
 
         setUser(response.data.account.user);

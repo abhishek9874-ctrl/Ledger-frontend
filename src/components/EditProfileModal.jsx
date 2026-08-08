@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { User, Mail, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 
 function EditProfileModal({ profile, onClose, fetchProfile }) {
 
@@ -20,18 +20,12 @@ function EditProfileModal({ profile, onClose, fetchProfile }) {
       setSuccess("");
       setLoading(true);
 
-      const token = localStorage.getItem("token");
 
-      await axios.put(
-        "http://localhost:3000/api/auth/profile",
+      await api.put(
+        "/auth/profile",
         {
           name,
           email,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 

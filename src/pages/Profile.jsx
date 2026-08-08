@@ -1,5 +1,5 @@
 import React from 'react'
-import axios from "axios";
+import api from "../api/axios";
 import { useEffect, useState } from "react";
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
@@ -20,15 +20,10 @@ function Profile() {
     const fetchProfile = async () => {
         try {
 
-            const token = localStorage.getItem("token");
+            
 
-            const response = await axios.get(
-                "http://localhost:3000/api/account/profile",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.get(
+                "/account/profile"
             );
 
             setProfile(response.data.account);

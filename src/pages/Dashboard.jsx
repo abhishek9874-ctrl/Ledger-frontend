@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
+import api from "../api/axios";
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 const user = JSON.parse(localStorage.getItem("user"));
@@ -21,15 +21,10 @@ function Dashboard() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem("token");
 
-                const response = await axios.get(
-                    "http://localhost:3000/api/account/profile",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                const response = await api.get(
+                    "/account/profile"
+                    
                 );
 
                 setUser(response.data.account.user);
@@ -45,15 +40,9 @@ function Dashboard() {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
-                const token = localStorage.getItem("token");
 
-                const response = await axios.get(
-                    "http://localhost:3000/api/account",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                const response = await api.get(
+                    "/account"
                 );
 
                 setAccounts(response.data.accounts);
@@ -63,35 +52,20 @@ function Dashboard() {
                 const accountId = response.data.accounts[0]._id;
                 setMyAccountId(accountId)
 
-                const balanceResponse = await axios.get(
-                    `http://localhost:3000/api/account/balance/${accountId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
+                const balanceResponse = await api.get(
+                    `/account/balance/${accountId}`
                 );
 
                 setTotalBalance(balanceResponse.data.balance);
 
-                const transactionResponse = await axios.get(
-                    "http://localhost:3000/api/transactions/recent",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const transactionResponse = await api.get(
+                    "/transactions/recent"
                 );
 
                 setTransactions(transactionResponse.data.transactions);
 
-                const ledgerResponse = await axios.get(
-                    `http://localhost:3000/api/ledger/${accountId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const ledgerResponse = await api.get(
+                    `/ledger/${accountId}`
                 );
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();

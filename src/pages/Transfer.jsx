@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { ArrowLeftRight, Wallet, User, FileText, Send, ChevronDown, } from "lucide-react";
-import axios from 'axios';
+import api from '../api/axios';
 import { v4 as uuidv4 } from "uuid";
 
 function Transfer() {
@@ -26,15 +26,10 @@ function Transfer() {
 
     const fetchAllAccounts = async () => {
         try {
-            const token = localStorage.getItem("token")
+            
 
-            const response = await axios.get(
-                "http://localhost:3000/api/account/all",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.get(
+                "/account/all"
             )
             setAccounts(response.data.accounts);
             if (response.data.accounts.length > 0) {
@@ -48,15 +43,9 @@ function Transfer() {
 
     const fetchMyAccount = async () => {
         try {
-            const token = localStorage.getItem("token");
 
-            const response = await axios.get(
-                `http://localhost:3000/api/account`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.get(
+                `/account`
             )
             setMyAccount(response.data.accounts[0])
             fetchBalance(response.data.accounts[0]._id);
@@ -71,15 +60,9 @@ function Transfer() {
     const fetchBalance = async (accountId) => {
         try {
 
-            const token = localStorage.getItem("token");
 
-            const response = await axios.get(
-                `http://localhost:3000/api/account/balance/${accountId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.get(
+                `/account/balance/${accountId}`
             );
 
             setBalance(response.data.balance);
@@ -97,7 +80,6 @@ function Transfer() {
         fetchAllAccounts();
     }, []);
 
-    console.log(balance)
     useEffect(() => {
 
         function handleClickOutside(event) {
@@ -142,7 +124,6 @@ function Transfer() {
 
         if (hasError) return;
 
-        console.log("Validation Passed");
 
 
         setLoading(true);
@@ -151,7 +132,6 @@ function Transfer() {
         try {
             const idempotencyKey = uuidv4();
 
-            console.log(idempotencyKey);
 
             const transferData = {
                 fromAccount: myAccount._id,
@@ -160,21 +140,13 @@ function Transfer() {
                 idempotencyKey
             };
 
-            console.log(transferData);
 
-            const token = localStorage.getItem("token");
 
-            const response = await axios.post(
-                "http://localhost:3000/api/transactions",
-                transferData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.post(
+                "/transactions",
+                transferData
             );
 
-            console.log(response.data);
             await fetchMyAccount();
             setTransactionId(response.data.transaction._id);
             setSuccessAmount(Number(amount));
