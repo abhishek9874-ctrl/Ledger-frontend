@@ -21,7 +21,14 @@ api.interceptors.request.use(
 
 
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+
+        window.dispatchEvent(
+            new Event("backend-recovered")
+        );
+
+        return response;
+    },
 
     (error) => {
 
@@ -33,6 +40,14 @@ api.interceptors.response.use(
 
             window.location.href = "/login";
         }
+        if (!error.response) {
+            console.error("Backend server is unavailable.");
+
+            window.dispatchEvent(
+                new Event("backend-unavailable")
+            );
+        }
+
 
         return Promise.reject(error);
     }

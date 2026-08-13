@@ -14,10 +14,17 @@ import Transfer from './pages/Transfer'
 import Profile from './pages/Profile'
 import ProtectedRoute from './components/ProtectedRoute'
 import About from './pages/About'
+import { useServerStatus } from "./context/ServerStatusContext";
+import ServerError from "./components/ServerError";
 
 
 
 function App() {
+  const { serverError } = useServerStatus();
+
+  if (serverError) {
+    return <ServerError />;
+  }
 
   return (
     <Routes>
@@ -62,7 +69,7 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path='/about' element={<About/>}/>
+      <Route path='/about' element={<About />} />
     </Routes>
   )
 }
