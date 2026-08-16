@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
 import { IdCard, IndianRupee, Calendar, ShieldCheck, Clock3, ArrowDown, ArrowUp, BarChart3, Info, Wallet } from "lucide-react";
 import api from '../api/axios';
 
 function ViewDetails() {
+    const { accountId } = useParams();
     const [accounts, setAccounts] = useState([]);
     const [balance, setBalance] = useState(0);
     const [totalCredits, setTotalCredits] = useState(0);
     const [totalDebits, setTotalDebits] = useState(0);
-
 
 
     const [user, setUser] = useState(null);
@@ -44,16 +45,21 @@ function ViewDetails() {
                     return;
                 }
 
-                const accountId = response.data.accounts[0]._id;
+                const selectedAccount = response.data.accounts.find(
+                    account => account._id === accountId
+                );
+                if (!selectedAccount) {
+                    return;
+                }
 
 
 
 
-                    const balanceResponse = await api.get(
-                        `/account/balance/${accountId}`,
-                    );
+                const balanceResponse = await api.get(
+                    `/account/balance/${accountId}`,
+                );
 
-                    setBalance(balanceResponse.data.balance);
+                setBalance(balanceResponse.data.balance);
 
                 const ledgerResponse = await api.get(
                     `/ledger/${accountId}`
@@ -133,7 +139,7 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Account ID</p>
                                     <h4 className="font-semibold break-all">
-                                        {accounts[0]?._id}
+                                        {accounts.find(account => account._id === accountId)?._id}
                                     </h4>
                                 </div>
                             </div>
@@ -146,7 +152,7 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Currency</p>
                                     <h4 className="font-semibold">
-                                        {accounts[0]?.currency}
+                                        {accounts.find(account => account._id === accountId)?.currency}
                                     </h4>
                                 </div>
                             </div>
@@ -159,8 +165,10 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Created On</p>
                                     <h4 className="font-semibold">
-                                        {accounts[0]?.createdAt
-                                            ? new Date(accounts[0].createdAt).toLocaleDateString("en-IN")
+                                        {accounts.find(account => account._id === accountId)?.createdAt
+                                            ? new Date(
+                                                accounts.find(account => account._id === accountId).createdAt
+                                            ).toLocaleDateString("en-IN")
                                             : "Loading..."}
                                     </h4>
                                 </div>
@@ -182,7 +190,7 @@ function ViewDetails() {
                                     </p>
 
                                     <span className="bg-green-100 text-green-700 px-4 py-1 rounded-xl font-medium">
-                                        {accounts[0]?.status}
+                                        {accounts.find(account => account._id === accountId)?.status}
                                     </span>
                                 </div>
                             </div>

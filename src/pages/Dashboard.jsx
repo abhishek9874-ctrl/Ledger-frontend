@@ -24,7 +24,7 @@ function Dashboard() {
 
                 const response = await api.get(
                     "/account/profile"
-                    
+
                 );
 
                 setUser(response.data.account.user);
@@ -40,52 +40,80 @@ function Dashboard() {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
+                const response = await api.get("/account");
 
-                const response = await api.get(
-                    "/account"
+                const userAccounts = response.data.accounts;
+
+                setAccounts(userAccounts);
+
+                if (userAccounts.length === 0) {
+                    setTotalBalance(0);
+                    setMyAccountId(null);
+                    return;
+                }
+
+                // Primary account
+                const primaryAccountId = userAccounts[0]._id;
+                setMyAccountId(primaryAccountId);
+
+                // Get balance of every account
+                const balanceResponses = await Promise.all(
+                    userAccounts.map((account) =>
+                        api.get(`/account/balance/${account._id}`)
+                    )
                 );
 
-                setAccounts(response.data.accounts);
-
-
-
-                const accountId = response.data.accounts[0]._id;
-                setMyAccountId(accountId)
-
-                const balanceResponse = await api.get(
-                    `/account/balance/${accountId}`
+                // Calculate total balance of all accounts
+                const total = balanceResponses.reduce(
+                    (sum, response) => sum + response.data.balance,
+                    0
                 );
 
-                setTotalBalance(balanceResponse.data.balance);
+                setTotalBalance(total);
 
+                // Recent transactions
                 const transactionResponse = await api.get(
                     "/transactions/recent"
                 );
 
                 setTransactions(transactionResponse.data.transactions);
 
-                const ledgerResponse = await api.get(
-                    `/ledger/${accountId}`
+                // Get ledger of every account
+                const ledgerResponses = await Promise.all(
+                    userAccounts.map((account) =>
+                        api.get(`/ledger/${account._id}`)
+                    )
                 );
+
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();
 
-                const monthlyExpense = ledgerResponse.data.entries.filter((entry) => {
-                    const transactionDate = new Date(entry.createdAt);
-                    return (
-                        entry.type === "DEBIT" &&
-                        transactionDate.getMonth() === currentMonth &&
-                        transactionDate.getFullYear() === currentYear
+                let totalMonthlyExpense = 0;
+
+                ledgerResponses.forEach((ledgerResponse) => {
+
+                    const monthlyExpenses =
+                        ledgerResponse.data.entries.filter((entry) => {
+
+                            const transactionDate =
+                                new Date(entry.createdAt);
+
+                            return (
+                                entry.type === "DEBIT" &&
+                                transactionDate.getMonth() === currentMonth &&
+                                transactionDate.getFullYear() === currentYear
+                            );
+                        });
+
+                    const accountExpense = monthlyExpenses.reduce(
+                        (sum, entry) => sum + entry.amount,
+                        0
                     );
+
+                    totalMonthlyExpense += accountExpense;
                 });
-                const expense = monthlyExpense.reduce((sum, entry) => {
-                    return sum + entry.amount;
-                }, 0);
 
-                setMonthlyExpense(expense);
-
-
-
+                setMonthlyExpense(totalMonthlyExpense);
 
             } catch (error) {
                 console.log(error.response?.data);
@@ -94,7 +122,7 @@ function Dashboard() {
 
         fetchAccounts();
     }, []);
-    console.log(transactions)
+
 
 
 
@@ -289,7 +317,9 @@ function Dashboard() {
                                 </div>) : (
 
                                     transactions.map((transaction) => {
-                                        const isDebit = transaction.fromAccount._id === myAccountId;
+                                        const isDebit = accounts.some(
+                                            (account) => account._id === transaction.fromAccount._id
+                                        );
 
 
                                         return (

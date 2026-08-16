@@ -13,33 +13,54 @@ import {
 function Accounts() {
     const [accounts, setAccounts] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
+    const [accountBalances, setAccountBalances] = useState({});
 
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
+                const response = await api.get("/account");
 
-                const response = await api.get(
-                    `/account`
-                );
+                const userAccounts = response.data.accounts;
 
-                setAccounts(response.data.accounts);
+                setAccounts(userAccounts);
 
-                if (response.data.accounts.length > 0) {
-
-                    const accountId = response.data.accounts[0]._id;
-
-                    const balanceResponse = await api.get(
-                        `/account/balance/${accountId}`
-                    );
-
-                    setTotalBalance(balanceResponse.data.balance);
+                if (userAccounts.length === 0) {
+                    setTotalBalance(0);
+                    setAccountBalances({});
+                    return;
                 }
 
+                // Fetch balance of every account
+                const balanceResponses = await Promise.all(
+                    userAccounts.map((account) =>
+                        api.get(`/account/balance/${account._id}`)
+                    )
+                );
+
+                // Store balance for each account
+                const balances = {};
+
+                balanceResponses.forEach((response, index) => {
+                    const accountId = userAccounts[index]._id;
+
+                    balances[accountId] = response.data.balance;
+                });
+
+                setAccountBalances(balances);
+
+                // Calculate total balance of all accounts
+                const total = Object.values(balances).reduce(
+                    (sum, balance) => sum + balance,
+                    0
+                );
+
+                setTotalBalance(total);
 
             } catch (err) {
-                console.log(err.response?.data)
+                console.log(err.response?.data);
             }
         };
+
         fetchAccounts();
     }, []);
 
@@ -124,87 +145,87 @@ function Accounts() {
                     </h2>
 
                     {/* Account Card */}
-                    {accounts.map((account)=>(
-                    <div key={account._id} className="bg-white border border-gray-200 rounded-3xl px-6 py-8 hover:shadow-lg transition-all duration-300">
+                    {accounts.map((account) => (
+                        <div key={account._id} className="bg-white border border-gray-200 rounded-3xl px-6 py-8 hover:shadow-lg transition-all duration-300">
 
-                        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between md:gap-6 gap-10">
+                            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between md:gap-6 gap-10">
 
-                            {/* Left Section */}
-                            <div className="flex items-center md:gap-6 gap-10">
+                                {/* Left Section */}
+                                <div className="flex items-center md:gap-6 gap-10">
 
-                                <div className="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center">
-                                    <Landmark size={40} className="text-blue-600" />
+                                    <div className="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center">
+                                        <Landmark size={40} className="text-blue-600" />
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-2xl font-semibold">
+                                            Account
+                                        </h3>
+
+                                        <p className="text-gray-500 mt-2">
+                                            Account ID
+                                        </p>
+
+                                        <p className="text-xl">
+                                            {account._id}
+                                        </p>
+                                    </div>
+
                                 </div>
 
-                                <div>
-                                    <h3 className="text-2xl font-semibold">
-                                        Account
-                                    </h3>
+                                {/* Middle Section */}
+                                <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-12">
 
-                                    <p className="text-gray-500 mt-2">
-                                        Account ID
-                                    </p>
+                                    <div>
+                                        <p className="text-gray-500">
+                                            Currency
+                                        </p>
 
-                                    <p className="text-xl">
-                                        {account._id}
-                                    </p>
+                                        <h4 className="text-xl font-medium mt-1">
+                                            {account.currency}
+                                        </h4>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-gray-500">
+                                            Created On
+                                        </p>
+
+                                        <h4 className="text-xl font-medium mt-1">
+                                            {new Date(account.createdAt).toLocaleDateString("en-IN")}
+                                        </h4>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-gray-500 ">
+                                            Balance
+                                        </p>
+
+                                        <h4 className="text-3xl font-bold mt-1">
+                                            ₹{(accountBalances[account._id] || 0).toLocaleString("en-IN")}
+                                        </h4>
+                                    </div>
+
+                                </div>
+
+                                {/* Right Section */}
+                                <div className="flex flex-col items-start xl:items-end gap-4 ">
+
+                                    <span className="w-fit bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium">
+                                        {account.status}
+                                    </span>
+
+                                    <Link to={`/viewdetails/${account._id}`}>
+                                        <button className="w-full xl:w-auto border border-blue-600 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition">
+                                            View Details →
+                                        </button>
+                                    </Link>
+
                                 </div>
 
                             </div>
 
-                            {/* Middle Section */}
-                            <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-12">
-
-                                <div>
-                                    <p className="text-gray-500">
-                                        Currency
-                                    </p>
-
-                                    <h4 className="text-xl font-medium mt-1">
-                                        {account.currency}
-                                    </h4>
-                                </div>
-
-                                <div>
-                                    <p className="text-gray-500">
-                                        Created On
-                                    </p>
-
-                                    <h4 className="text-xl font-medium mt-1">
-                                        {new Date(account.createdAt).toLocaleDateString("en-IN")}
-                                    </h4>
-                                </div>
-
-                                <div>
-                                    <p className="text-gray-500 ">
-                                        Balance
-                                    </p>
-
-                                    <h4 className="text-3xl font-bold mt-1">
-                                        ₹{totalBalance.toLocaleString("en-IN")}
-                                    </h4>
-                                </div>
-
-                            </div>
-
-                            {/* Right Section */}
-                            <div className="flex flex-col items-start xl:items-end gap-4 ">
-
-                                <span className="w-fit bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium">
-                                    {account.status}
-                                </span>
-
-                               <Link to={`/viewdetails/${account._id}`}>
-                                    <button className="w-full xl:w-auto border border-blue-600 text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition">
-                                    View Details →
-                                </button>
-                               </Link>
-
-                            </div>
-
-                        </div>
-
-                    </div>))}
+                        </div>))}
 
                 </div>
             </div>

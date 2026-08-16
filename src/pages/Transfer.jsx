@@ -23,10 +23,13 @@ function Transfer() {
     const [transferError, setTransferError] = useState("");
     const [transactionTime, setTransactionTime] = useState("");
     const [transactionId, setTransactionId] = useState("");
+    const [selectedFromAccount, setSelectedFromAccount] = useState(null);
+    const [showFromDropdown, setShowFromDropdown] = useState(false);
+    const [myAccounts, setMyAccounts] = useState([]);
 
     const fetchAllAccounts = async () => {
         try {
-            
+
 
             const response = await api.get(
                 "/account/all"
@@ -47,7 +50,11 @@ function Transfer() {
             const response = await api.get(
                 `/account`
             )
-            setMyAccount(response.data.accounts[0])
+            setMyAccounts(response.data.accounts);
+
+            setMyAccount(response.data.accounts[0]);
+            setSelectedFromAccount(response.data.accounts[0]);
+
             fetchBalance(response.data.accounts[0]._id);
         } catch (err) {
             console.log(err)
@@ -112,7 +119,7 @@ function Transfer() {
 
         let hasError = false;
 
-        if (!selectedAccount) {
+        if (!selectedFromAccount || !selectedAccount) {
             setRecipientError("Please select a recipient account");
             hasError = true;
         }
@@ -134,7 +141,7 @@ function Transfer() {
 
 
             const transferData = {
-                fromAccount: myAccount._id,
+                fromAccount: selectedFromAccount._id,
                 toAccount: selectedAccount._id,
                 amount: Number(amount),
                 idempotencyKey
@@ -214,13 +221,12 @@ function Transfer() {
                         <div className="space-y-8">
 
                             {/* ================= From Account ================= */}
-                            <div>
+                            <div className="relative">
 
-                                <label className="block text-lg font-semibold text-gray-800 mb-3">
-                                    From Account
-                                </label>
-
-                                <button className="w-full border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-blue-500 transition">
+                                <button
+                                    onClick={() => setShowFromDropdown(!showFromDropdown)}
+                                    className="w-full border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between hover:border-blue-500 transition"
+                                >
 
                                     <div className="flex items-center gap-4">
 
@@ -231,14 +237,16 @@ function Transfer() {
                                         <div className="text-left">
 
                                             <h3 className="font-semibold text-lg">
-                                                Savings Account
+                                                {selectedFromAccount ? "Savings Account" : "Select Account"}
                                             </h3>
 
-                                            <p className="text-gray-500">
-                                                *****{myAccount?._id.slice(-6)}
-                                                <span className="mx-2">•</span>
-                                                ₹{balance.toLocaleString("en-IN")}
-                                            </p>
+                                            {selectedFromAccount && (
+                                                <p className="text-gray-500">
+                                                    *****{selectedFromAccount._id.slice(-6).toUpperCase()}
+                                                    <span className="mx-2">•</span>
+                                                    ₹{balance.toLocaleString("en-IN")}
+                                                </p>
+                                            )}
 
                                         </div>
 
@@ -248,9 +256,53 @@ function Transfer() {
 
                                 </button>
 
-                                <p className="text-blue-600 mt-3 font-medium">
-                                    This is your default account
-                                </p>
+
+                                {/* From Account Dropdown */}
+
+                                {showFromDropdown && (
+                                    <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
+
+                                        {myAccounts.map((account) => (
+
+                                            <button
+                                                key={account._id}
+                                                onClick={() => {
+                                                    setSelectedFromAccount(account);
+                                                    setShowFromDropdown(false);
+                                                    fetchBalance(account._id);
+                                                }}
+                                                className="w-full px-5 py-4 text-left hover:bg-gray-100 transition"
+                                            >
+
+                                                <div className="flex items-center gap-4">
+
+                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                                                        <Wallet
+                                                            className="text-blue-600"
+                                                            size={22}
+                                                        />
+                                                    </div>
+
+                                                    <div>
+
+                                                        <h3 className="font-semibold">
+                                                            Savings Account
+                                                        </h3>
+
+                                                        <p className="text-sm text-gray-500">
+                                                            *****{account._id.slice(-6).toUpperCase()}
+                                                        </p>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </button>
+
+                                        ))}
+
+                                    </div>
+                                )}
 
                             </div>
 
@@ -280,7 +332,7 @@ function Transfer() {
                                                 </h3>
 
                                                 <p className="text-gray-500">
-                                                    *****{selectedAccount?._id.slice(-6)}
+                                                    *****{selectedAccount?._id.slice(-6).toUpperCase()}
                                                 </p>
                                             </div>
 
@@ -308,7 +360,7 @@ function Transfer() {
                                                     </h3>
 
                                                     <p className="text-sm text-gray-500">
-                                                        *****{account._id.slice(-6)}
+                                                        *****{account._id.slice(-6).toUpperCase()}
                                                     </p>
                                                 </button>
                                             ))}

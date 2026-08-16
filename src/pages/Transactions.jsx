@@ -19,70 +19,113 @@ function Transactions() {
   const [search, setSearch] = useState("");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState("all");
 
 
   useEffect(() => {
-    const fetchAccounts = async () => {
+
+    const calculateAccountStats = async () => {
+
       try {
 
-        const response = await api.get(
-          `/account`
-        );
-        setAccounts(response.data.accounts);
-        if (response.data.accounts.length === 0) {
+        // ALL ACCOUNTS
+        if (selectedAccount === "all") {
+
+          let totalBalance = 0;
+          let totalCredit = 0;
+          let totalDebit = 0;
+          let totalTransaction = 0;
+
+          for (const account of accounts) {
+
+            const balanceResponse = await api.get(
+              `/account/balance/${account._id}`
+            );
+
+            totalBalance += balanceResponse.data.balance;
+
+            const ledgerResponse = await api.get(
+              `/ledger/${account._id}`
+            );
+
+            const entries = ledgerResponse.data.entries;
+
+            totalCredit += entries
+              .filter(entry => entry.type === "CREDIT")
+              .reduce((sum, entry) => sum + entry.amount, 0);
+
+            totalDebit += entries
+              .filter(entry => entry.type === "DEBIT")
+              .reduce((sum, entry) => sum + entry.amount, 0);
+
+            totalTransaction += entries.length;
+          }
+
+          setBalance(totalBalance);
+          setTotalCredits(totalCredit);
+          setTotalDebits(totalDebit);
+          setTotalTransactions(totalTransaction);
+
           return;
         }
 
-        const accountId = response.data.accounts[0]._id;
-        setMyAccountId(accountId);
-
-        const transactionResponse = await api.get(
-          `/transactions`
+        // SINGLE ACCOUNT
+        const balanceResponse = await api.get(
+          `/account/balance/${selectedAccount}`
         );
-        setTransactions(transactionResponse.data.transactions);
 
+        setBalance(balanceResponse.data.balance);
 
-
-
-          const balanceResponse = await api.get(
-            `/account/balance/${accountId}`
-          );
-
-          setBalance(balanceResponse.data.balance);
         const ledgerResponse = await api.get(
-          `/ledger/${accountId}`
+          `/ledger/${selectedAccount}`
         );
-        const credits = ledgerResponse.data.entries
+
+        const entries = ledgerResponse.data.entries;
+
+        const credits = entries
           .filter(entry => entry.type === "CREDIT")
           .reduce((sum, entry) => sum + entry.amount, 0);
 
-        setTotalCredits(credits);
-
-
-
-        const debits = ledgerResponse.data.entries
+        const debits = entries
           .filter(entry => entry.type === "DEBIT")
           .reduce((sum, entry) => sum + entry.amount, 0);
 
+        setTotalCredits(credits);
         setTotalDebits(debits);
-        setTotalTransactions(ledgerResponse.data.entries.length);
-
+        setTotalTransactions(entries.length);
 
       } catch (err) {
-        console.log(err.response?.data)
+
+        console.log(err.response?.data);
+
       }
     };
-    fetchAccounts();
-  }, [])
-  const filteredTransactions = transactions.filter((transaction) => {
-    const isCredit = transaction.toAccount._id === myAccountId;
 
-    // Counterparty name
+    if (accounts.length > 0) {
+      calculateAccountStats();
+    }
+
+  }, [selectedAccount, accounts]);
+  const filteredTransactions = transactions.filter((transaction) => {
+
+    const belongsToSelectedAccount =
+      selectedAccount === "all" ||
+      transaction.fromAccount._id === selectedAccount ||
+      transaction.toAccount._id === selectedAccount;
+
+    if (!belongsToSelectedAccount) {
+      return false;
+    }
+
+    const isCredit =
+      selectedAccount !== "all"
+        ? transaction.toAccount._id === selectedAccount
+        : transaction.toAccount._id === myAccountId;
+
     const counterparty = isCredit
       ? transaction.fromAccount.user.name
       : transaction.toAccount.user.name;
 
-    // Search filter
     const matchesSearch = counterparty
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -94,11 +137,9 @@ function Transactions() {
     const matchesDate =
       !selectedDate || transactionDate === selectedDate;
 
-    // Credit / Debit filter
     if (filter === "CREDIT" && !isCredit) return false;
     if (filter === "DEBIT" && isCredit) return false;
 
-    // Search filter
     return matchesSearch && matchesDate;
   });
 
@@ -203,6 +244,30 @@ function Transactions() {
 
         </div>
         <div className="bg-white border border-gray-200 rounded-3xl p-4 md:p-6 mb-8">
+          {/* Account Selector */}
+          <div className="mb-6">
+
+            <label className="block text-sm font-medium text-gray-600 mb-2">
+              Account
+            </label>
+
+            <select
+              value={selectedAccount}
+              onChange={(e) => setSelectedAccount(e.target.value)}
+              className="border border-gray-200 rounded-xl px-4 py-3 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">
+                All Accounts
+              </option>
+
+              {accounts.map((account, index) => (
+                <option key={account._id} value={account._id}>
+                  {index === 0 ? "Account" : "Account"} — ****
+                  {account._id.slice(-6).toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Filters */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
@@ -309,7 +374,10 @@ function Transactions() {
                       </p>
                     </div>) :
                     (filteredTransactions.map((transaction) => {
-                      const isCredit = transaction.toAccount._id === myAccountId;
+                      const isCredit =
+                        selectedAccount !== "all"
+                          ? transaction.toAccount._id === selectedAccount
+                          : transaction.toAccount._id === myAccountId;
                       return (
                         <div>
                           <div

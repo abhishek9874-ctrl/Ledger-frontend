@@ -188,9 +188,12 @@ function Login() {
                             </div>
 
                             <div className="text-right mt-2">
-                                <button className="text-blue-600 text-sm cursor-pointer hover:underline">
+                                <Link
+                                    to="/forgotPassword"
+                                    className="text-blue-600 text-sm cursor-pointer hover:underline"
+                                >
                                     Forgot Password?
-                                </button>
+                                </Link>
                             </div>
                             {error && (
                                 <p className="mt-2 text-sm text-red-600">
@@ -209,7 +212,7 @@ function Login() {
                             </button>
 
                             {/* Divider */}
-                            
+
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 h-px bg-gray-300"></div>
 
