@@ -57,7 +57,7 @@ function Accounts() {
                 setTotalBalance(total);
 
             } catch (err) {
-                console.log(err.response?.data);
+                setError("Unable to load accounts. Please try again.");
             }
         };
 

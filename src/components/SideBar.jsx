@@ -1,12 +1,29 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import api from "../api/axios";
 
-import {Landmark,LayoutDashboard,Wallet,ArrowLeftRight,Repeat,FileText,User,LogOut,Menu,X,} from "lucide-react";
+import { Landmark, LayoutDashboard, Wallet, ArrowLeftRight, Repeat, FileText, User, LogOut, Menu, X, } from "lucide-react";
 
 function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+
+      localStorage.removeItem("token");
+
+      window.location.href = "/login";
+
+    } catch (error) {
+      console.log(
+        error.response?.data || error.message
+      );
+    }
+  };
 
   return (
     <>
@@ -100,7 +117,7 @@ function SideBar() {
               Transactions
             </NavLink>
 
-           <NavLink
+            <NavLink
               to="/transfer"
               className={({ isActive }) =>
                 `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
@@ -113,7 +130,7 @@ function SideBar() {
               Transfer
             </NavLink>
 
-           
+
 
             <NavLink
               to="/profile"
@@ -133,12 +150,60 @@ function SideBar() {
 
         {/* Bottom */}
         <div className="p-4 border-t border-gray-200">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50">
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50">
             <LogOut size={20} />
             Logout
           </button>
         </div>
       </div>
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4">
+
+          <div className="w-full max-w-md bg-white rounded-3xl p-7 shadow-2xl">
+
+            <div className="flex items-center justify-center mb-5">
+              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                <LogOut
+                  size={30}
+                  className="text-red-500"
+                />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-center text-slate-900">
+              Are you sure?
+            </h2>
+
+            <p className="text-gray-500 text-center mt-3">
+              Are you sure you want to logout from Backend Ledger?
+            </p>
+
+            <div className="flex gap-4 mt-7">
+
+              {/* No */}
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-5 py-3 rounded-xl border border-gray-200 font-medium text-gray-700 hover:bg-gray-100 transition"
+              >
+                No
+              </button>
+
+              {/* Yes */}
+              <button
+                onClick={handleLogout}
+                className="flex-1 px-5 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition"
+              >
+                Yes, Logout
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
     </>
   );
 }
