@@ -154,17 +154,25 @@ function Transfer() {
                 transferData
             );
 
-            await fetchMyAccount();
             setTransactionId(response.data.transaction._id);
             setSuccessAmount(Number(amount));
             setSuccessRecipient(selectedAccount.user.name);
+
             setTransactionTime(
                 new Date().toLocaleString("en-IN", {
                     dateStyle: "medium",
                     timeStyle: "short",
                 })
             );
+
             setShowSuccessCard(true);
+
+            
+            try {
+                await fetchMyAccount();
+            } catch (error) {
+                
+            }
 
             setAmount("");
             setNote("");
@@ -543,7 +551,7 @@ function Transfer() {
                                     </span>
 
                                     <span className="font-semibold font-mono">
-                                        #{transactionId.slice(-8)}
+                                        #{transactionId.slice(-8).toUpperCase()}
                                     </span>
                                 </div>
 
