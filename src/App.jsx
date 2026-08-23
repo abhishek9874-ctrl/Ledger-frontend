@@ -18,6 +18,7 @@ import { useServerStatus } from "./context/ServerStatusContext";
 import ServerError from "./components/ServerError";
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import LearnMore from './pages/LearnMore'
 
 
 
@@ -74,6 +75,7 @@ function App() {
       <Route path='/about' element={<About />} />
       <Route path='/forgotPassword' element={<ForgotPassword/>}/>
       <Route path='/reset-password/:token' element={<ResetPassword/>}/>
+      <Route path='/learn-more' element={<LearnMore/>}/>
     </Routes>
   )
 }

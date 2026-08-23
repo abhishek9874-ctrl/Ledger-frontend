@@ -114,7 +114,7 @@ function Profile() {
                                             />
 
                                             <span className="text-gray-700">
-                                                A/C ••••{profile?._id?.slice(-4)}
+                                                A/C ••••{profile?._id?.slice(-4).toUpperCase()}
                                             </span>
 
                                         </div>

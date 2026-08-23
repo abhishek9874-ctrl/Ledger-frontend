@@ -259,7 +259,7 @@ function Dashboard() {
                                             </h3>
 
                                             <p className="text-gray-500 text-sm">
-                                                ACC-{account._id.slice(-4)}
+                                                ACC-{account._id.slice(-4).toUpperCase()}
                                             </p>
                                         </div>
 

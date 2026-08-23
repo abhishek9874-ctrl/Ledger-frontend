@@ -20,7 +20,7 @@ function Hero() {
                           <button className='group border-blue-600 border-2 bg-blue-600 px-8 py-3 text-white rounded-lg flex items-center gap-2 hover:bg-white cursor-pointer hover:text-blue-600 transition-all duration-300'>Get Started <FaArrowRight className="group-hover:translate-x-1 transition-transform" /></button>
                           </Link>
             
-                        <button className='text-blue-600 px-7 py-3 cursor-pointer border-blue-300 border-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300'>Learn More</button>
+                        <Link to={"/learn-more"}><button className='text-blue-600 px-7 py-3 cursor-pointer border-blue-300 border-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all duration-300'>Learn More</button></Link>
                     </div>
                 </div>
             </div>

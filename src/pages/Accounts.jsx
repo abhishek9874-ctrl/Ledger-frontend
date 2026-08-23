@@ -167,7 +167,7 @@ function Accounts() {
                                         </p>
 
                                         <p className="text-xl">
-                                            {account._id}
+                                            {account._id.toUpperCase()}
                                         </p>
                                     </div>
 

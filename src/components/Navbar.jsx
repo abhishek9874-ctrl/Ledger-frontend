@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { MdAccountBalance } from 'react-icons/md'
-import { FaWallet } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { NavLink } from "react-router-dom";
+import { Landmark } from 'lucide-react';
 
 function Navbar() {
   const [active, setActive] = useState(false);
   return (
     <nav className='flex justify-between items-center border-b px-6 py-4 border-gray-200 '>
       <div className='flex items-center gap-2'>
-        <MdAccountBalance className='text-4xl text-blue-800' />
-        <h1 className='text-xl md:text-2xl  font-bold'>Backend Ledger</h1>
+        <Landmark className="text-blue-600" />
+            <h1 className="text-2xl font-bold text-blue-600">
+              Backend Ledger
+            </h1>
       </div>
 
       <ul className='hidden md:flex items-center font-medium text-gray-700 gap-8'>

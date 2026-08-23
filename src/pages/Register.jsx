@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import api from "../api/axios"
 import { MdAccountBalance } from 'react-icons/md'
 import { Shield, BarChart3, Zap } from "lucide-react";
-import { FaUser, FaEnvelope, FaLock, FaGoogle, FaGithub } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaGithub } from "react-icons/fa";
+import { GoogleLogin } from "@react-oauth/google";
 import { IoEyeOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
@@ -47,6 +48,27 @@ function Register() {
             );
         }
     }
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            const response = await api.post("/auth/google", {
+            credential: credentialResponse.credential,
+            action: "register",
+        });
+
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem(
+                "user",
+                JSON.stringify(response.data.user)
+            );
+
+            navigate("/createAccount");
+
+        } catch (err) {
+            setError(
+                err.response?.data?.message || "Google registration failed"
+            );
+        }
+    };
     return (
         <div>
             {/* Logo */}
@@ -251,23 +273,17 @@ function Register() {
                             </div>
 
                             {/* Social Buttons */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="flex justify-center">
 
-                                <button
-                                    type="button"
-                                    className="border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50"
-                                >
-                                    <FaGoogle />
-                                    Google
-                                </button>
+                                <div className="border border-gray-200 rounded-xl p-2 hover:bg-gray-50 transition">
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={() => setError("Google registration failed")}
+                                        useOneTap={false}
+                                    />
+                                </div>
 
-                                <button
-                                    type="button"
-                                    className="border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-3 hover:bg-gray-50"
-                                >
-                                    <FaGithub />
-                                    GitHub
-                                </button>
+                                
 
                             </div>
 
