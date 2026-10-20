@@ -7,7 +7,7 @@ import {
   Wallet,
   ArrowLeftRight,
   FileBarChart,
-  Settings,
+  User,
   LogOut,
   TrendingUp,
   TrendingDown,
@@ -73,8 +73,8 @@ const steps = [
   {
     n: "04",
     icon: TrendingUp,
-    title: "Monitor Finances",
-    desc: "View reports, analyze spending and make smarter financial decisions.",
+    title: "Manage Your Accounts",
+  desc: "Create and organize multiple accounts, and keep track of their balances in one place.",
     bg: "bg-orange-50",
     fg: "text-orange-600",
   },
@@ -155,7 +155,7 @@ function Logo({ light = false }) {
     <div className="flex items-center gap-2 font-bold text-lg">
       <Landmark className="text-blue-600" />
                   <h1 className="text-2xl font-bold text-blue-600">
-                    Backend Ledger
+                    Ledgerly
                   </h1>
     </div>
   );
@@ -213,8 +213,7 @@ function DashboardMock() {
     { icon: Wallet, label: "Accounts" },
     { icon: ArrowLeftRight, label: "Transactions" },
     { icon: ArrowLeftRight, label: "Transfer Money" },
-    { icon: FileBarChart, label: "Reports" },
-    { icon: Settings, label: "Settings" },
+    { icon: User, label: "Profile" }
   ];
 
   return (
@@ -317,13 +316,13 @@ function Hero() {
     <section className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12 items-center">
       <div>
         <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold mb-5">
-          LEARN MORE ABOUT BACKEND LEDGER
+          LEARN MORE ABOUT LEDGERLY
         </span>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
           A smarter way to <span className="text-blue-600">manage your money</span>
         </h1>
         <p className="mt-5 text-slate-500 text-lg leading-relaxed max-w-lg">
-          Backend Ledger is a secure and intelligent platform that helps you manage
+          LEDGERLY is a secure and intelligent platform that helps you manage
           multiple accounts, transfer money, track transactions, and understand your
           spending from one place.
         </p>
@@ -331,8 +330,8 @@ function Hero() {
         <div className="mt-8 space-y-5">
           {[
             { icon: ShieldCheck, title: "Secure & Private", desc: "Your data is encrypted and protected", bg: "bg-blue-50", fg: "text-blue-600" },
-            { icon: TrendingUp, title: "Fast & Reliable", desc: "Instant transfers and real-time tracking", bg: "bg-emerald-50", fg: "text-emerald-600" },
-            { icon: FileBarChart, title: "Smart Insights", desc: "Understand your money better", bg: "bg-violet-50", fg: "text-violet-600" },
+            { icon: TrendingUp, title: "Fast & Reliable", desc: "Reliable Transfers and Transfer money between accounts and review transaction records", bg: "bg-emerald-50", fg: "text-emerald-600" },
+            { icon: FileBarChart, title: "Clear Visibility", desc: "Track your accounts, balances, and transactions in one place.", bg: "bg-violet-50", fg: "text-violet-600" },
           ].map(({ icon: Icon, title, desc, bg, fg }) => (
             <div key={title} className="flex items-center gap-4">
               <span className={`grid place-items-center w-11 h-11 rounded-xl ${bg} ${fg} shrink-0`}>
@@ -356,7 +355,7 @@ function HowItWorks() {
   return (
     <section className="bg-slate-50 py-20">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-extrabold text-slate-900 text-center">How Backend Ledger Works</h2>
+        <h2 className="text-3xl font-extrabold text-slate-900 text-center">How LEDGERLY Works</h2>
         <p className="text-slate-500 text-center mt-2">Manage your finances in four simple steps</p>
 
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
@@ -430,7 +429,7 @@ function WhyUs() {
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-extrabold text-slate-900 text-center">Why Backend Ledger?</h2>
+        <h2 className="text-3xl font-extrabold text-slate-900 text-center">Why LEDGERLY?</h2>
         <div className="mt-12 grid sm:grid-cols-3 gap-10">
           {whyUs.map(({ icon: Icon, title, desc, bg, fg }) => (
             <div key={title} className="flex flex-col sm:items-start items-center text-center sm:text-left">
@@ -457,8 +456,9 @@ function CTA() {
         <div className="flex-1 text-center lg:text-left">
           <h3 className="text-white text-xl sm:text-2xl font-extrabold">Ready to take control of your finances?</h3>
           <p className="text-blue-100 mt-2 max-w-xl">
-            Join thousands of users who trust Backend Ledger to manage their money smarter
-            and grow their finances with confidence.
+            Ready to manage your money smarter?
+
+Bring your accounts and transactions together with LEDGERLY.
           </p>
         </div>
         <div className="flex gap-3 shrink-0">

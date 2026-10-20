@@ -48,11 +48,11 @@ function About() {
               </p>
 
               <h1 className="text-5xl font-bold text-slate-900 mt-4 leading-tight">
-                About Backend Ledger
+                About LEDGERLY
               </h1>
 
               <p className="mt-6 text-lg text-gray-600 leading-9 max-w-xl">
-                Backend Ledger is a modern digital banking application
+                LEDGERLY is a modern digital banking application
                 that helps you manage accounts, transfer money securely,
                 and track your financial activity with ease.
               </p>
@@ -226,11 +226,11 @@ function About() {
               </div>
 
               <h3 className="mt-6 font-semibold text-lg">
-                Expense Analytics
+                Review Your Activity
               </h3>
 
               <p className="mt-3 text-gray-500 text-sm leading-7">
-                Monitor your spending with simple and clear analytics.
+                Review your account balances and track your financial activity in one place.
               </p>
 
             </motion.div>
@@ -454,13 +454,13 @@ function About() {
             <div className="flex items-center gap-3">
               <MdAccountBalance className="text-3xl text-blue-700" />
               <h2 className="text-xl font-bold text-slate-900">
-                Backend Ledger
+                LEDGERLY
               </h2>
             </div>
 
             {/* Copyright */}
             <p className="text-gray-500 text-sm text-center">
-              © {new Date().getFullYear()} Backend Ledger. All rights reserved.
+              © {new Date().getFullYear()} LEDGERLY. All rights reserved.
             </p>
           </div>
 

@@ -32,7 +32,7 @@ function SideBar() {
 
         <h1 className=" flex gap-2 text-xl font-bold text-blue-600">
           <Landmark className="text-blue-600" />
-          Backend Ledger
+          LEDGERLY
         </h1>
 
         <button onClick={() => setIsOpen(true)}>
@@ -65,7 +65,7 @@ function SideBar() {
           <div className="p-6  border-gray-200 flex items-center justify-between">
             <Landmark className="text-blue-600" />
             <h1 className="text-2xl font-bold text-blue-600">
-              Backend Ledger
+              LEDGERLY
             </h1>
 
             <button

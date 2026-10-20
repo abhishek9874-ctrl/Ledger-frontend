@@ -11,7 +11,7 @@ function Navbar() {
       <div className='flex items-center gap-2'>
         <Landmark className="text-blue-600" />
             <h1 className="text-2xl font-bold text-blue-600">
-              Backend Ledger
+              LEDGERLY
             </h1>
       </div>
 
