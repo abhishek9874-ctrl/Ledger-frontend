@@ -7,6 +7,29 @@ import TransactionDetailsModal from '../components/TransactionDetailsModal';
 import { AnimatePresence } from "framer-motion";
 
 
+
+const getCurrentMonthEntries = (entries) => {
+    const now = new Date();
+
+    const monthStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        1
+    );
+
+    const nextMonthStart = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        1
+    );
+
+    return entries.filter((entry) => {
+        const entryDate = new Date(entry.createdAt);
+        return entryDate >= monthStart && entryDate < nextMonthStart;
+    });
+};
+
+
 function Transactions() {
     const [accounts, setAccounts] = useState([]);
     const [balance, setBalance] = useState(0);
@@ -84,16 +107,18 @@ function Transactions() {
                         );
 
                         const entries = ledgerResponse.data.entries;
+                        const monthlyEntries = getCurrentMonthEntries(entries);
 
-                        totalCredit += entries
+                        
+                        totalCredit += monthlyEntries
                             .filter(entry => entry.type === "CREDIT")
                             .reduce((sum, entry) => sum + entry.amount, 0);
 
-                        totalDebit += entries
+                        totalDebit += monthlyEntries
                             .filter(entry => entry.type === "DEBIT")
                             .reduce((sum, entry) => sum + entry.amount, 0);
 
-                        totalTransaction += entries.length;
+                        totalTransaction += monthlyEntries.length;
                     }
 
                     setBalance(totalBalance);
@@ -116,12 +141,14 @@ function Transactions() {
                 );
 
                 const entries = ledgerResponse.data.entries;
+                const monthlyEntries = getCurrentMonthEntries(entries);
+                
 
-                const credits = entries
+                const credits = monthlyEntries
                     .filter(entry => entry.type === "CREDIT")
                     .reduce((sum, entry) => sum + entry.amount, 0);
 
-                const debits = entries
+                const debits = monthlyEntries
                     .filter(entry => entry.type === "DEBIT")
                     .reduce((sum, entry) => sum + entry.amount, 0);
 

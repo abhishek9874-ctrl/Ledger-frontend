@@ -155,7 +155,7 @@ function Logo({ light = false }) {
     <div className="flex items-center gap-2 font-bold text-lg">
       <Landmark className="text-blue-600" />
                   <h1 className="text-2xl font-bold text-blue-600">
-                    Ledgerly
+                    LEDGERLY
                   </h1>
     </div>
   );

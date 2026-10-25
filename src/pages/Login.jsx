@@ -244,7 +244,7 @@ function Login() {
                             {/* Social Buttons */}
                             <div className="flex justify-center">
 
-                                <div className="border border-gray-200 rounded-xl p-2 hover:bg-gray-50 transition">
+                                <div>
                                     <GoogleLogin
                                         onSuccess={handleGoogleSuccess}
                                         onError={() => setError("Google login failed")}

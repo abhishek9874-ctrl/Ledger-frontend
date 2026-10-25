@@ -1,7 +1,7 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
@@ -19,6 +19,9 @@ import ServerError from "./components/ServerError";
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import LearnMore from './pages/LearnMore'
+import CreateInitialFunds from './pages/CreateInitialFunds'
+
+const user = JSON.parse(localStorage.getItem("user") || "null");
 
 
 
@@ -72,10 +75,24 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/create-initial-fund"
+        element={
+          <ProtectedRoute>
+            {user?.systemUser === true ? (
+              <CreateInitialFunds />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )}
+          </ProtectedRoute>
+        }
+      />
+
       <Route path='/about' element={<About />} />
-      <Route path='/forgotPassword' element={<ForgotPassword/>}/>
-      <Route path='/reset-password/:token' element={<ResetPassword/>}/>
-      <Route path='/learn-more' element={<LearnMore/>}/>
+      <Route path='/forgotPassword' element={<ForgotPassword />} />
+      <Route path='/reset-password/:token' element={<ResetPassword />} />
+      <Route path='/learn-more' element={<LearnMore />} />
     </Routes>
   )
 }
