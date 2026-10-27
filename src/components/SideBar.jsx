@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 import { Landmark, LayoutDashboard, Wallet, ArrowLeftRight, Repeat, FileText, User, LogOut, Menu, X, } from "lucide-react";
@@ -9,19 +9,20 @@ function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const handleLogout = async () => {
     try {
       await api.post("/auth/logout");
-
-      localStorage.removeItem("token");
-
-      window.location.href = "/login";
-
     } catch (error) {
-      console.log(
-        error.response?.data || error.message
-      );
+      console.log(error.response?.data || error.message);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("Name");
+      navigate("/login", { replace: true });
     }
   };
 
@@ -129,6 +130,22 @@ function SideBar() {
               <Repeat size={20} />
               Transfer
             </NavLink>
+
+            {user?.systemUser === true && (
+              <NavLink
+                to="/create-initial-fund"
+                onClick={() => setIsOpen(false)}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                    ? "bg-blue-50 text-blue-600 font-medium"
+                    : "hover:bg-gray-100"
+                  }`
+                }
+              >
+                <Landmark size={20} />
+                Create Initial Funds
+              </NavLink>
+            )}
 
 
 

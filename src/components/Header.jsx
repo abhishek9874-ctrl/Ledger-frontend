@@ -39,10 +39,12 @@ function Header() {
           : location.pathname.startsWith("/viewdetails")
             ? "Account Details"
             : location.pathname === "/transfer"
-              ? "Tranfer Money"
+              ? "Transfer Money"
               : location.pathname === "/profile"
                 ? "Profile"
-                : "Backend Ledger";
+                : location.pathname === "/create-initial-fund"
+                  ? "Create Initial Funds"
+                  : "Backend Ledger";
   return (
     <div className="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between">
 

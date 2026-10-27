@@ -19,6 +19,19 @@ function Navbar() {
         <Link to={"/dashboard"}><li className='cursor-pointer hover:text-blue-600'>Home</li></Link>
         <Link to={"/accounts"}><li className='cursor-pointer hover:text-blue-600'>Accounts</li></Link>
         <Link to={"/transactions"}> <li className='cursor-pointer hover:text-blue-600'>Transactions</li></Link>
+        {user?.systemUser === true && (
+          <NavLink
+            to="/create-initial-fund"
+            className={({ isActive }) =>
+              `flex items-center gap-2 cursor-pointer hover:text-blue-600 ${
+                isActive ? "text-blue-600" : "text-gray-700"
+              }`
+            }
+          >
+            <ArrowLeftRight size={18} />
+            Create Initial Funds
+          </NavLink>
+        )}
         <NavLink
           to="/about"
           className={({ isActive }) =>
