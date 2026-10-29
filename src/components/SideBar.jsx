@@ -63,14 +63,15 @@ function SideBar() {
         {/* Top Section */}
         <div>
           {/* Logo */}
-          <div className="p-6  border-gray-200 flex items-center justify-between">
-            <Landmark className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-blue-600">
+          <div className="flex items-center justify-start gap-3 px-6 py-8 border-b border-gray-200">
+            <Landmark className="shrink-0 text-blue-600" size={28} />
+
+            <h1 className="text-2xl font-bold text-blue-600 whitespace-nowrap">
               LEDGERLY
             </h1>
 
             <button
-              className="md:hidden"
+              className="ml-auto md:hidden"
               onClick={() => setIsOpen(false)}
             >
               <X size={24} />
@@ -118,18 +119,20 @@ function SideBar() {
               Transactions
             </NavLink>
 
-            <NavLink
-              to="/transfer"
-              className={({ isActive }) =>
-                `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
-                  ? "bg-blue-50 text-blue-600 font-medium"
-                  : "hover:bg-gray-100"
-                }`
-              }
-            >
-              <Repeat size={20} />
-              Transfer
-            </NavLink>
+            {user?.systemUser === false && (
+              <NavLink
+                to="/transfer"
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-4 py-3 rounded-xl ${isActive
+                    ? "bg-blue-50 text-blue-600 font-medium"
+                    : "hover:bg-gray-100"
+                  }`
+                }
+              >
+                <Repeat size={20} />
+                Transfer
+              </NavLink>
+            )}
 
             {user?.systemUser === true && (
               <NavLink

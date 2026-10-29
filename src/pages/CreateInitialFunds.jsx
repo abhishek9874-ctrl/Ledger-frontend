@@ -18,7 +18,6 @@ import Header from "../components/Header";
 import { v4 as uuidv4 } from "uuid";
 
 
-const idempotencyKey = crypto.randomUUID();
 
 
 
@@ -36,22 +35,23 @@ function CreateInitialFunds() {
 
   useEffect(() => {
     const fetchAccounts = async () => {
-  try {
-    const response = await api.get("/account/all");
+      try {
+        const response = await api.get("/account/all");
+        
 
-    const accountList = response.data.accounts || [];
+        const accountList = response.data.accounts || [];
 
-    setAccounts(accountList);
-  } catch (err) {
-    console.error("Failed to fetch all accounts:", err);
-    setError(
-      err.response?.data?.message ||
-      "Unable to load recipient accounts."
-    );
-  } finally {
-    setLoadingAccounts(false);
-  }
-};
+        setAccounts(accountList);
+      } catch (err) {
+        console.error("Failed to fetch all accounts:", err);
+        setError(
+          err.response?.data?.message ||
+          "Unable to load recipient accounts."
+        );
+      } finally {
+        setLoadingAccounts(false);
+      }
+    };
 
     fetchAccounts();
   }, []);
@@ -76,13 +76,12 @@ function CreateInitialFunds() {
     setSubmitting(true);
 
     try {
-      const idempotencyKey = crypto.randomUUID();
+      const idempotencyKey = uuidv4();
 
-      const response = await api.post("/transactions/create-initial-fund", {
+      const response = await api.post("/transactions/system/initial-funds", {
         toAccount: selectedAccount,
         amount: numericAmount,
         idempotencyKey,
-        note: note.trim(),
       });
       setSuccess(
         response.data.message || "Initial funds created successfully!"

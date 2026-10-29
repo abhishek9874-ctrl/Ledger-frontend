@@ -63,7 +63,12 @@ function App() {
         path="/transfer"
         element={
           <ProtectedRoute>
-            <Transfer />
+            
+            {user.systemUser===false?(
+              <Transfer />
+            ):(
+              <Navigate to="/dashboard" replace/>
+            )}
           </ProtectedRoute>
         }
       />

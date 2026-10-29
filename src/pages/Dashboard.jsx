@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import api from "../api/axios";
 import SideBar from '../components/SideBar'
 import Header from '../components/Header'
-const user = JSON.parse(localStorage.getItem("user"));
 import { Eye, EyeOff, ReceiptText } from "lucide-react";
 import { Link } from 'react-router-dom';
 
@@ -33,7 +32,6 @@ function Dashboard() {
                 console.log(err.response?.data);
             }
         };
-
         fetchProfile();
     }, []);
 
@@ -137,93 +135,119 @@ function Dashboard() {
                     <h1 className='font-bold text-2xl md:text-4xl'>Welcome back, {user?.name}!👋</h1>
                     <p className='py-2 md:py-4 text-sm md:text-base text-gray-600'>Here's a quick overview of your finances.</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
+
+                    <div
+                        className={`grid grid-cols-1 gap-6 mt-8 ${user?.systemUser === true
+                            ? "md:grid-cols-2"
+                            : "md:grid-cols-2 xl:grid-cols-3"
+                            }`}
+                    >
+
 
                         {/* Total Balance */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center gap-4">
+                        {user?.systemUser !== true && (
+                            <div className="bg-white border border-gray-200 rounded-3xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                <div className="flex items-center gap-4">
 
-                                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl">
-                                    💳
-                                </div>
-
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-sm text-gray-500">
-                                            Total Balance
-                                        </p>
-
-                                        <button
-                                            onClick={() => setShowBalance(!showBalance)}
-                                            className="text-gray-500 hover:text-gray-700"
-                                        >
-                                            {showBalance ? (
-                                                <EyeOff size={16} />
-                                            ) : (
-                                                <Eye size={16} />
-                                            )}
-                                        </button>
+                                    <div className="shrink-0 w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl">
+                                        💳
                                     </div>
 
-                                    <h2 className="text-3xl font-bold text-slate-900 mt-1">
-                                        {showBalance
-                                            ? `₹${totalBalance.toLocaleString("en-IN")}`
-                                            : "XXXXXX.XX"}
-                                    </h2>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm text-gray-500">
+                                                Total Balance
+                                            </p>
+
+                                            <button
+                                                onClick={() => setShowBalance(!showBalance)}
+                                                className="text-gray-500 hover:text-gray-700"
+                                            >
+                                                {showBalance ? (
+                                                    <EyeOff size={16} />
+                                                ) : (
+                                                    <Eye size={16} />
+                                                )}
+                                            </button>
+                                        </div>
+
+                                        <h2 className="text-3xl font-bold text-slate-900 mt-1">
+                                            {showBalance
+                                                ? `₹${totalBalance.toLocaleString("en-IN")}`
+                                                : "XXXXXX.XX"}
+                                        </h2>
+
+
+                                    </div>
 
 
                                 </div>
-
                             </div>
-                        </div>
+                        )}
+
 
                         {/* Monthly Expense */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            className={`w-full ${user?.systemUser === true
+                                ? "max-w-[500px] p-4"
+                                : "p-6"
+                                } bg-white border border-gray-200 rounded-3xl hover:shadow-lg transition-all duration-300`}
+                        >
                             <div className="flex items-center gap-4">
-
-                                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-2xl">
+                                <div
+                                    className={`shrink-0 ${user?.systemUser === true ? "w-10 h-10 text-xl" : "w-14 h-14 text-2xl"
+                                        } bg-green-100 rounded-2xl flex items-center justify-center`}
+                                >
                                     📈
                                 </div>
 
                                 <div>
                                     <p className="text-sm text-gray-500">
-                                        This Month Expense
+                                        This Month {user?.systemUser === true ? "Transfer" : "Expense"}
                                     </p>
 
-                                    <h2 className="text-3xl font-bold text-slate-900 mt-1">
+                                    <h2
+                                        className={`font-bold text-slate-900 mt-1 ${user?.systemUser === true ? "text-2xl" : "text-3xl"
+                                            }`}
+                                    >
                                         ₹{monthlyExpense.toLocaleString("en-IN")}
                                     </h2>
 
                                     <p className="text-sm text-gray-400 mt-1">
-                                        Total expense this month
+                                        Total {user?.systemUser===true ? "Transfer":"Expense"} this month
                                     </p>
                                 </div>
-
                             </div>
                         </div>
 
-                        {/* Active Accounts */}
-                        <div className="bg-white border border-gray-200 rounded-3xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                            <div className="flex items-center gap-4">
 
-                                <div className="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-2xl">
+
+                        <div
+                            className={`w-full ${user?.systemUser === true
+                                ? "max-w-[500px] p-4"
+                                : "p-6"
+                                } bg-white border border-gray-200 rounded-3xl hover:shadow-lg transition-all duration-300`}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div
+                                    className={`shrink-0 ${user?.systemUser === true ? "w-10 h-10 text-xl" : "w-14 h-14 text-2xl"
+                                        } bg-purple-100 rounded-2xl flex items-center justify-center`}
+                                >
                                     🏦
                                 </div>
 
                                 <div>
-                                    <p className="text-sm text-gray-500">
-                                        Account Number
-                                    </p>
+                                    <p className="text-sm text-gray-500">Account Number</p>
 
-                                    <h2 className="text-3xl font-bold text-slate-900 mt-1">
+                                    <h2
+                                        className={`font-bold text-slate-900 mt-1 ${user?.systemUser === true ? "text-2xl" : "text-3xl"
+                                            }`}
+                                    >
                                         *****{myAccountId?.slice(-6).toUpperCase()}
                                     </h2>
 
-                                    <p className="text-sm text-gray-400 mt-1">
-                                        Primary Account
-                                    </p>
+                                    <p className="text-sm text-gray-400 mt-1">{user?.systemUser === true ? "System" :"Primary"} Account</p>
                                 </div>
-
                             </div>
                         </div>
 
@@ -249,7 +273,7 @@ function Dashboard() {
                                 >
                                     <div className="flex items-center gap-4">
 
-                                        <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                                        <div className="shrink-0 w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
                                             🏦
                                         </div>
 
@@ -259,7 +283,7 @@ function Dashboard() {
                                             </h3>
 
                                             <p className="text-gray-500 text-sm">
-                                                ACC-{account._id.slice(-4).toUpperCase()}
+                                                ACC-{account._id.slice(-6).toUpperCase()}
                                             </p>
                                         </div>
 
