@@ -73,7 +73,7 @@ function Accounts() {
         <div className='flex flex-col md:flex-row min-h-screen bg-gray-50'>
             <SideBar />
 
-            <div className='flex-1 bg-gray-50'>
+            <div className="flex-1 min-w-0 w-full bg-gray-50">
                 <Header />
                 <main className="w-full min-w-0 px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
                     <h1 className="mt-4 mb-8 text-xl font-semibold sm:text-2xl md:text-3xl">
@@ -82,17 +82,20 @@ function Accounts() {
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
 
                         {/* Total Accounts */}
-                        <div className="bg-white border md:h-40 border-gray-200 rounded-3xl px-8 py-7 flex items-center gap-5 hover:shadow-md transition">
-                            <div className="w-20 h-20 rounded-2xl bg-blue-100 flex items-center justify-center">
+                        <div className="bg-white border border-gray-200 rounded-2xl
+                p-4 sm:p-6 flex items-center gap-3 sm:gap-5
+                hover:shadow-md transition min-w-0">
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-xl
+                bg-blue-100 flex items-center justify-center">
                                 <Landmark size={50} className="text-blue-600" />
                             </div>
 
                             <div>
-                                <p className="text-gray-500 text-2xl">
+                                <p className="text-gray-500 text-sm sm:text-lg">
                                     Total Accounts
                                 </p>
 
-                                <h2 className="text-3xl font-bold mt-1">
+                                <h2 className="text-xl sm:text-2xl font-bold mt-1">
                                     {accounts.length}
                                 </h2>
                             </div>
@@ -150,7 +153,7 @@ function Accounts() {
                         {accounts.map((account) => (
                             <div key={account._id} className="bg-white border border-gray-200 rounded-3xl px-6 py-8 hover:shadow-lg transition-all duration-300">
 
-                                <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between md:gap-6 gap-10">
+                                <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
 
                                     {/* Left Section */}
                                     <div className="flex min-w-0 items-center gap-4 sm:gap-6">
@@ -176,8 +179,7 @@ function Accounts() {
                                     </div>
 
                                     {/* Middle Section */}
-                                    <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-12">
-
+                                   <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-6">
                                         <div>
                                             <p className="text-gray-500">
                                                 Currency
@@ -211,8 +213,7 @@ function Accounts() {
                                     </div>
 
                                     {/* Right Section */}
-                                    {/* Right Section */}
-                                    <div className="flex flex-row items-start justify-between xl:flex-col xl:items-end gap-4">
+                                   <div className="flex flex-row items-center justify-between xl:flex-col xl:items-end gap-4">
                                         <span className="w-fit bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium">
                                             {account.status}
                                         </span>

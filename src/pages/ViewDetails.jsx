@@ -103,7 +103,7 @@ function ViewDetails() {
                             Current Balance
                         </p>
 
-                        <h1 className="text-6xl font-bold mt-3">
+                        <h1 className="text-4xl sm:text-6xl font-bold mt-3">
                             ₹{balance.toLocaleString("en-IN")}
                         </h1>
 
@@ -139,7 +139,7 @@ function ViewDetails() {
                                 <div>
                                     <p className="text-gray-500">Account ID</p>
                                     <h4 className="font-semibold break-all">
-                                        {accounts.find(account => account._id === accountId)?._id}
+                                        {accounts.find(account => account._id === accountId)?._id.toUpperCase()}
                                     </h4>
                                 </div>
                             </div>
@@ -221,8 +221,9 @@ function ViewDetails() {
                     {/* Total Credits */}
                     <div className="bg-green-50 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 border hover:scale-[1.01] border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
 
-                        <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center">
-                            <ArrowDown size={35} className="text-green-600" />
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
+                            <ArrowDown size={24} className="text-green-600 sm:hidden" />
+                            <ArrowDown size={35} className="text-green-600 hidden sm:block" />
                         </div>
 
                         <div>
@@ -230,7 +231,7 @@ function ViewDetails() {
                                 Total Credits
                             </p>
 
-                            <h3 className="text-4xl font-bold text-green-600 mt-1">
+                            <h3 className="text-2xl sm:text-4xl font-bold text-green-600 mt-1">
                                 ₹{totalCredits.toLocaleString("en-IN")}
                             </h3>
 
@@ -244,8 +245,9 @@ function ViewDetails() {
                     {/* Total Debits */}
                     <div className="bg-red-50 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-50 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
 
-                        <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center">
-                            <ArrowUp size={35} className="text-red-500" />
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-red-100 flex items-center justify-center shrink-0">
+                            <ArrowUp size={24} className="text-red-600 sm:hidden" />
+                            <ArrowUp size={35} className="text-red-600 hidden sm:block" />
                         </div>
 
                         <div>
@@ -253,7 +255,7 @@ function ViewDetails() {
                                 Total Debits
                             </p>
 
-                            <h3 className="text-4xl font-bold text-red-500 mt-1">
+                            <h3 className="text-2xl sm:text-4xl font-bold text-red-500 mt-1">
                                 ₹{totalDebits.toLocaleString("en-IN")}
                             </h3>
 
@@ -267,8 +269,9 @@ function ViewDetails() {
                     {/* Net Balance */}
                     <div className="bg-purple-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
 
-                        <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center">
-                            <BarChart3 size={35} className="text-purple-600" />
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
+                            <BarChart3 size={24} className="text-purple-600 sm:hidden" />
+                            <BarChart3 size={35} className="text-purple-600 hidden sm:block" />
                         </div>
 
                         <div>
@@ -276,7 +279,7 @@ function ViewDetails() {
                                 Net Balance
                             </p>
 
-                            <h3 className="text-4xl font-bold text-purple-600 mt-1">
+                            <h3 className="text-2xl sm:text-4xl font-bold text-purple-600 mt-1">
                                 ₹{balance.toLocaleString("en-IN")}
                             </h3>
 

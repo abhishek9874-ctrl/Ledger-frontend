@@ -53,7 +53,7 @@ function SideBar() {
       <div
         className={`
     fixed top-0 left-0 z-50
-    w-64 h-screen bg-white border-r border-gray-200
+    w-64 min-w-64 shrink-0 h-screen bg-white border-r border-gray-200
     flex flex-col justify-between
     transition-transform duration-300
     ${isOpen ? "translate-x-0" : "-translate-x-full"}

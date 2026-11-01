@@ -19,19 +19,19 @@ function TransactionDetailsModal({ transaction, myAccountId, onClose }) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.25 }}
-                className="bg-white rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-xl min-w-0 shadow-2xl overflow-x-hidden max-h-[90vh] overflow-y-auto"
             >
                 {/* Header */}
 
-                <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+                <div className="flex items-start justify-between gap-3 px-4 py-4 sm:px-8 sm:py-6 border-b border-gray-200">
 
                     <div>
 
-                        <h2 className="text-3xl font-bold">
+                        <h2 className="text-xl sm:text-3xl font-bold">
                             Transaction Details
                         </h2>
 
-                        <p className="text-gray-500 mt-2">
+                        <p className="text-gray-500 text-xs sm:text-base mt-2">
                             View complete transaction information
                         </p>
 
@@ -45,48 +45,40 @@ function TransactionDetailsModal({ transaction, myAccountId, onClose }) {
                     </button>
 
                 </div>
-                <div className="grid grid-cols-2 gap-6 p-8 border-b border-gray-200">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 p-4 sm:p-8 border-b border-gray-200">
 
                     {/* Status */}
-                    <div className="bg-green-50 rounded-2xl p-6 border border-green-100">
-
-                        <p className="text-sm text-gray-500 mb-2">
+                    <div className="min-w-0 bg-green-50 rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-green-100">
+                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
                             Status
                         </p>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                            <div className="w-2 h-2 shrink-0 rounded-full bg-green-500"></div>
 
-                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-
-                            <h3 className="text-xl font-bold text-green-600">
+                            <h3 className="text-sm sm:text-xl font-bold text-green-600 break-words">
                                 {transaction.status}
                             </h3>
-
                         </div>
-
                     </div>
 
                     {/* Type */}
-                    <div className={`${isDebit ? "bg-red-50" : "bg-green-50"} rounded-2xl p-6 border ${isDebit?"border-red-100":"border-green-100"}`}>
-
-                        <p className="text-sm text-gray-500 mb-2">
+                    <div className={`${isDebit ? "bg-red-50" : "bg-green-50"} min-w-0 rounded-xl sm:rounded-2xl p-3 sm:p-6 border ${isDebit ? "border-red-100" : "border-green-100"}`}>
+                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
                             Type
                         </p>
 
-                        <div className="flex items-center gap-3">
-
+                        <div className="flex items-center gap-2 min-w-0">
                             {isDebit ? (
-                                <ArrowUp className="text-red-600" size={30} />
+                                <ArrowUp className="text-red-600 shrink-0" size={22} />
                             ) : (
-                                <ArrowDown className="text-green-600" size={30} />
+                                <ArrowDown className="text-green-600 shrink-0" size={22} />
                             )}
 
-                            <h3 className={`text-2xl font-bold ${isDebit ? "text-red-600" : "text-green-600"}`}>
+                            <h3 className={`text-lg sm:text-2xl font-bold break-words ${isDebit ? "text-red-600" : "text-green-600"}`}>
                                 {isDebit ? "DEBIT" : "CREDIT"}
                             </h3>
-
                         </div>
-
                     </div>
 
                 </div>
@@ -113,14 +105,14 @@ function TransactionDetailsModal({ transaction, myAccountId, onClose }) {
                         </div>
 
                         {/* Amount */}
-                        <div className={`${isDebit?"bg-red-50":"bg-green-50"} rounded-2xl p-5 border ${isDebit? "border-red-100":"border-green-100"}`}>
+                        <div className={`${isDebit ? "bg-red-50" : "bg-green-50"} rounded-2xl p-5 border ${isDebit ? "border-red-100" : "border-green-100"}`}>
 
                             <p className="text-sm text-gray-500">
                                 Amount
                             </p>
 
-                            <h4 className={`font-bold text-2xl ${isDebit?"text-red-600":"text-green-600"} mt-2`}>
-                                {isDebit?"-":"+"}₹{transaction.amount}
+                            <h4 className={`font-bold text-2xl ${isDebit ? "text-red-600" : "text-green-600"} mt-2`}>
+                                {isDebit ? "-" : "+"}₹{transaction.amount}
                             </h4>
 
                         </div>
