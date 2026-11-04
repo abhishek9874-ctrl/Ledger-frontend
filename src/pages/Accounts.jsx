@@ -14,6 +14,7 @@ function Accounts() {
     const [accounts, setAccounts] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
     const [accountBalances, setAccountBalances] = useState({});
+    const user = JSON.parse(localStorage.getItem("user") || "null");
 
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -79,15 +80,15 @@ function Accounts() {
                     <h1 className="mt-4 mb-8 text-xl font-semibold sm:text-2xl md:text-3xl">
                         Manage all your accounts in one place.
                     </h1>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className={`grid grid-cols-1 gap-5 sm:grid-cols-2 ${user?.systemUser === true ? "xl:grid-cols-2" : "xl:grid-cols-3"
+                        }`}>
 
                         {/* Total Accounts */}
                         <div className="bg-white border border-gray-200 rounded-2xl
                 p-4 sm:p-6 flex items-center gap-3 sm:gap-5
                 hover:shadow-md transition min-w-0">
-                            <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 rounded-xl
-                bg-blue-100 flex items-center justify-center">
-                                <Landmark size={50} className="text-blue-600" />
+                            <div className="w-12 h-12 shrink-0 rounded-xl bg-blue-100 flex items-center justify-center">
+                                <Landmark size={26} className="text-blue-600" />
                             </div>
 
                             <div>
@@ -102,27 +103,28 @@ function Accounts() {
                         </div>
 
                         {/* Total Balance */}
-                        <div className="bg-white border border-gray-200 rounded-3xl px-8 py-8 min-h-[140px] flex items-center gap-6 hover:shadow-md transition">
-                            <div className="w-20 h-20 rounded-2xl bg-green-100 flex items-center justify-center">
-                                <Wallet size={50} className="text-green-600" />
+                        {user?.systemUser === false && (
+                            <div className="bg-white border border-gray-200 rounded-3xl px-8 py-8 min-h-[140px] flex items-center gap-6 hover:shadow-md transition">
+                                <div className="w-12 h-12 shrink-0 rounded-xl bg-green-100 flex items-center justify-center">
+                                    <Wallet size={26} className="text-green-600" />
+                                </div>
+
+                                <div>
+                                    <p className="text-gray-500 text-2xl">
+                                        Total Balance
+                                    </p>
+
+                                    <h2 className="text-2xl font-bold text-black mt-1">
+                                        ₹{totalBalance.toLocaleString("en-IN")}
+                                    </h2>
+                                </div>
                             </div>
-
-                            <div>
-                                <p className="text-gray-500 text-2xl">
-                                    Total Balance
-                                </p>
-
-
-                                <h2 className="text-2xl font-bold text-black mt-1">
-                                    ₹{totalBalance.toLocaleString("en-IN")}
-                                </h2>
-                            </div>
-                        </div>
+                        )}
 
                         {/* Active Accounts */}
                         <div className="bg-white border border-gray-200 rounded-3xl px-8 py-7 flex items-center gap-5 hover:shadow-md transition">
-                            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center">
-                                <BadgeCheck size={50} className="text-purple-600" />
+                            <div className="w-12 h-12 shrink-0 rounded-xl bg-purple-100 flex items-center justify-center">
+                                <BadgeCheck size={26} className="text-purple-600" />
                             </div>
 
                             <div>
@@ -158,8 +160,8 @@ function Accounts() {
                                     {/* Left Section */}
                                     <div className="flex min-w-0 items-center gap-4 sm:gap-6">
 
-                                        <div className="w-20 h-20 min-w-20 shrink-0 aspect-square rounded-2xl bg-blue-100 flex items-center justify-center">
-                                            <Landmark size={40} className="text-blue-600" />
+                                        <div className="w-12 h-12 shrink-0 rounded-xl bg-blue-100 flex items-center justify-center">
+                                            <Landmark size={24} className="text-blue-600" />
                                         </div>
 
                                         <div className="min-w-0 flex-1">
@@ -179,7 +181,7 @@ function Accounts() {
                                     </div>
 
                                     {/* Middle Section */}
-                                   <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-6">
+                                    <div className="grid grid-cols-2 xl:flex xl:flex-wrap gap-6 xl:gap-6">
                                         <div>
                                             <p className="text-gray-500">
                                                 Currency
@@ -200,20 +202,22 @@ function Accounts() {
                                             </h4>
                                         </div>
 
-                                        <div>
-                                            <p className="text-gray-500 ">
-                                                Balance
-                                            </p>
+                                        {user?.systemUser === false && (
+                                            <div>
+                                                <p className="text-gray-500">
+                                                    Balance
+                                                </p>
 
-                                            <h4 className="text-3xl font-bold mt-1">
-                                                ₹{(accountBalances[account._id] || 0).toLocaleString("en-IN")}
-                                            </h4>
-                                        </div>
+                                                <h4 className="text-3xl font-bold mt-1">
+                                                    ₹{(accountBalances[account._id] || 0).toLocaleString("en-IN")}
+                                                </h4>
+                                            </div>
+                                        )}
 
                                     </div>
 
                                     {/* Right Section */}
-                                   <div className="flex flex-row items-center justify-between xl:flex-col xl:items-end gap-4">
+                                    <div className="flex flex-row items-center justify-between xl:flex-col xl:items-end gap-4">
                                         <span className="w-fit bg-green-100 text-green-700 px-4 py-2 rounded-xl font-medium">
                                             {account.status}
                                         </span>

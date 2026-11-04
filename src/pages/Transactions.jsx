@@ -213,11 +213,10 @@ function Transactions() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 md:m-10 m-5 gap-6">
 
                     {/* Credits */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 flex items-center gap-3 sm:gap-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-12 h-12 sm:w-20 sm:h-20 shrink-0 rounded-2xl sm:rounded-3xl bg-green-100 flex items-center justify-center">
-                            <ArrowDown size={24} className="text-green-600 sm:hidden" />
-                            <ArrowDown size={42} className="text-green-600 hidden sm:block" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-green-100 flex items-center justify-center">
+                            <ArrowDown size={25} className="text-green-600" />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -225,23 +224,21 @@ function Transactions() {
                                 Total Credits
                             </p>
 
-                            <h2 className="text-2xl sm:text-4xl font-bold text-green-600 mt-1 break-words">
+                            <h2 className="text-2xl sm:text-2xl font-bold text-green-600 mt-1">
                                 ₹{totalCredits.toLocaleString("en-IN")}
                             </h2>
 
-                            <p className="text-xs sm:text-base text-gray-500 mt-1 sm:mt-2">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
                                 This month
                             </p>
                         </div>
-
                     </div>
 
                     {/* Debits */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 flex items-center gap-3 sm:gap-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-12 h-12 sm:w-20 sm:h-20 shrink-0 rounded-2xl sm:rounded-3xl bg-red-100 flex items-center justify-center">
-                            <ArrowUp size={24} className="text-red-500 sm:hidden" />
-                            <ArrowUp size={42} className="text-red-500 hidden sm:block" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-red-100 flex items-center justify-center">
+                            <ArrowUp size={25} className="text-red-500" />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -249,23 +246,21 @@ function Transactions() {
                                 Total Debits
                             </p>
 
-                            <h2 className="text-2xl sm:text-4xl font-bold text-red-500 mt-1 break-words">
+                            <h2 className="text-2xl sm:text-2xl font-bold text-red-500 mt-1">
                                 ₹{totalDebits.toLocaleString("en-IN")}
                             </h2>
 
-                            <p className="text-xs sm:text-base text-gray-500 mt-1 sm:mt-2">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
                                 This month
                             </p>
                         </div>
-
                     </div>
 
                     {/* Transactions */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 flex items-center gap-3 sm:gap-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-12 h-12 sm:w-20 sm:h-20 shrink-0 rounded-2xl sm:rounded-3xl bg-blue-100 flex items-center justify-center">
-                            <ArrowLeftRight size={24} className="text-blue-600 sm:hidden" />
-                            <ArrowLeftRight size={42} className="text-blue-600 hidden sm:block" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-blue-100 flex items-center justify-center">
+                            <ArrowLeftRight size={25} className="text-blue-600" />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -273,23 +268,21 @@ function Transactions() {
                                 Total Transactions
                             </p>
 
-                            <h2 className="text-2xl sm:text-4xl font-bold text-blue-600 mt-1">
+                            <h2 className="text-2xl sm:text-2xl font-bold text-blue-600 mt-1">
                                 {totalTransactions}
                             </h2>
 
-                            <p className="text-xs sm:text-base text-gray-500 mt-1 sm:mt-2">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
                                 This month
                             </p>
                         </div>
-
                     </div>
 
                     {/* Balance */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 flex items-center gap-3 sm:gap-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-12 h-12 sm:w-20 sm:h-20 shrink-0 rounded-2xl sm:rounded-3xl bg-purple-100 flex items-center justify-center">
-                            <Wallet size={24} className="text-purple-600 sm:hidden" />
-                            <Wallet size={42} className="text-purple-600 hidden sm:block" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-purple-100 flex items-center justify-center">
+                            <Wallet size={25} className="text-purple-600" />
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -297,15 +290,14 @@ function Transactions() {
                                 Current Balance
                             </p>
 
-                            <h2 className="text-2xl sm:text-4xl font-bold text-purple-600 mt-1 break-words">
+                            <h2 className="text-xl sm:text-2xl font-bold text-purple-600 mt-1 break-words">
                                 ₹{balance.toLocaleString("en-IN")}
                             </h2>
 
-                            <p className="text-xs sm:text-base text-gray-500 mt-1 sm:mt-2">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
                                 Available Balance
                             </p>
                         </div>
-
                     </div>
 
                 </div>
