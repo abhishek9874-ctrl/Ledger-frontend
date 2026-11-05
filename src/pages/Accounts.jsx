@@ -84,15 +84,13 @@ function Accounts() {
                         }`}>
 
                         {/* Total Accounts */}
-                        <div className="bg-white border border-gray-200 rounded-2xl
-                p-4 sm:p-6 flex items-center gap-3 sm:gap-5
-                hover:shadow-md transition min-w-0">
-                            <div className="w-12 h-12 shrink-0 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4 min-h-[96px] hover:shadow-md transition">
+                            <div className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center">
                                 <Landmark size={26} className="text-blue-600" />
                             </div>
 
                             <div>
-                                <p className="text-gray-500 text-sm sm:text-lg">
+                                <p className="text-sm sm:text-base text-gray-500">
                                     Total Accounts
                                 </p>
 
@@ -104,17 +102,16 @@ function Accounts() {
 
                         {/* Total Balance */}
                         {user?.systemUser === false && (
-                            <div className="bg-white border border-gray-200 rounded-3xl px-8 py-8 min-h-[140px] flex items-center gap-6 hover:shadow-md transition">
-                                <div className="w-12 h-12 shrink-0 rounded-xl bg-green-100 flex items-center justify-center">
+                            <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4 min-h-[96px] hover:shadow-md transition">
+                                <div className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center">
                                     <Wallet size={26} className="text-green-600" />
                                 </div>
 
-                                <div>
-                                    <p className="text-gray-500 text-2xl">
+                                <div><p className="text-sm sm:text-base text-gray-500">
                                         Total Balance
                                     </p>
 
-                                    <h2 className="text-2xl font-bold text-black mt-1">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-black mt-1">
                                         ₹{totalBalance.toLocaleString("en-IN")}
                                     </h2>
                                 </div>
@@ -122,17 +119,17 @@ function Accounts() {
                         )}
 
                         {/* Active Accounts */}
-                        <div className="bg-white border border-gray-200 rounded-3xl px-8 py-7 flex items-center gap-5 hover:shadow-md transition">
-                            <div className="w-12 h-12 shrink-0 rounded-xl bg-purple-100 flex items-center justify-center">
+                        <div className="bg-white border border-gray-200 rounded-2xl p-5 flex items-center gap-4 min-h-[96px] hover:shadow-md transition">
+                            <div className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center">
                                 <BadgeCheck size={26} className="text-purple-600" />
                             </div>
 
                             <div>
-                                <p className="text-gray-500 text-2xl">
+                                <p className="text-sm sm:text-base text-gray-500">
                                     Active Accounts
                                 </p>
 
-                                <h2 className="text-3xl font-bold text-purple-600 mt-1">
+                                <h2 className="text-xl sm:text-2xl font-bold text-purple-600 mt-1">
                                     {accounts.filter(
                                         account => account.status === 'ACTIVE'
                                     ).length}

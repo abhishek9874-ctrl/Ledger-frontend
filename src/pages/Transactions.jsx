@@ -6,6 +6,9 @@ import api from '../api/axios';
 import TransactionDetailsModal from '../components/TransactionDetailsModal';
 import { AnimatePresence } from "framer-motion";
 
+const user = JSON.parse(localStorage.getItem("user") || "null");
+const isSystemUser = user?.systemUser === true;
+
 
 
 const getCurrentMonthEntries = (entries) => {
@@ -210,29 +213,32 @@ function Transactions() {
             <SideBar />
             <div className='flex-1 bg-gray-50'>
                 <Header />
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 md:m-10 m-5 gap-6">
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:m-10 m-5 ${isSystemUser ? "xl:grid-cols-2" : "xl:grid-cols-4"
+                    }`}>
 
                     {/* Credits */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
+                    {!isSystemUser && (
+                        <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-green-100 flex items-center justify-center">
-                            <ArrowDown size={25} className="text-green-600" />
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-green-100 flex items-center justify-center">
+                                <ArrowDown size={25} className="text-green-600" />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm sm:text-base text-gray-500">
+                                    Total Credits
+                                </p>
+
+                                <h2 className="text-2xl sm:text-2xl font-bold text-green-600 mt-1">
+                                    ₹{totalCredits.toLocaleString("en-IN")}
+                                </h2>
+
+                                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                                    This month
+                                </p>
+                            </div>
                         </div>
-
-                        <div className="min-w-0 flex-1">
-                            <p className="text-sm sm:text-base text-gray-500">
-                                Total Credits
-                            </p>
-
-                            <h2 className="text-2xl sm:text-2xl font-bold text-green-600 mt-1">
-                                ₹{totalCredits.toLocaleString("en-IN")}
-                            </h2>
-
-                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                                This month
-                            </p>
-                        </div>
-                    </div>
+                    )}
 
                     {/* Debits */}
                     <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
@@ -279,26 +285,28 @@ function Transactions() {
                     </div>
 
                     {/* Balance */}
-                    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
+                    {!isSystemUser && (
+                        <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 hover:shadow-lg transition-all duration-300 min-w-0">
 
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-purple-100 flex items-center justify-center">
-                            <Wallet size={25} className="text-purple-600" />
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl bg-purple-100 flex items-center justify-center">
+                                <Wallet size={25} className="text-purple-600" />
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                                <p className="text-sm sm:text-base text-gray-500">
+                                    Current Balance
+                                </p>
+
+                                <h2 className="text-xl sm:text-2xl font-bold text-purple-600 mt-1 break-words">
+                                    ₹{balance.toLocaleString("en-IN")}
+                                </h2>
+
+                                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                                    Available Balance
+                                </p>
+                            </div>
                         </div>
-
-                        <div className="min-w-0 flex-1">
-                            <p className="text-sm sm:text-base text-gray-500">
-                                Current Balance
-                            </p>
-
-                            <h2 className="text-xl sm:text-2xl font-bold text-purple-600 mt-1 break-words">
-                                ₹{balance.toLocaleString("en-IN")}
-                            </h2>
-
-                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                                Available Balance
-                            </p>
-                        </div>
-                    </div>
+                    )}
 
                 </div>
                 <div className="bg-white border border-gray-200 rounded-3xl p-4 md:p-6 mb-8">

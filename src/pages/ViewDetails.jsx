@@ -5,6 +5,9 @@ import Header from '../components/Header'
 import { IdCard, IndianRupee, Calendar, ShieldCheck, Clock3, ArrowDown, ArrowUp, BarChart3, Info, Wallet } from "lucide-react";
 import api from '../api/axios';
 
+const user = JSON.parse(localStorage.getItem("user") || "null");
+const isSystemUser = user?.systemUser === true;
+
 function ViewDetails() {
     const { accountId } = useParams();
     const [accounts, setAccounts] = useState([]);
@@ -95,31 +98,33 @@ function ViewDetails() {
             <div className='flex-1 bg-gray-50'>
                 <Header />
 
-                <div className="bg-gradient-to-r from-slate-50 to-blue-100 border hover:scale-[1.01]  md:m-6 m-4 border-gray-200 rounded-3xl p-8 flex items-center justify-between overflow-hidden hover:shadow-lg transition-all duration-300">
+                {!isSystemUser && (
+                    <div className="bg-gradient-to-r from-slate-50 to-blue-100 border hover:scale-[1.01]  md:m-6 m-4 border-gray-200 rounded-3xl p-8 flex items-center justify-between overflow-hidden hover:shadow-lg transition-all duration-300">
 
-                    {/* Left Side */}
-                    <div>
-                        <p className="text-gray-500 text-xl">
-                            Current Balance
-                        </p>
+                        {/* Left Side */}
+                        <div>
+                            <p className="text-gray-500 text-xl">
+                                Current Balance
+                            </p>
 
-                        <h1 className="text-4xl sm:text-6xl font-bold mt-3">
-                            ₹{balance.toLocaleString("en-IN")}
-                        </h1>
+                            <h1 className="text-4xl sm:text-6xl font-bold mt-3">
+                                ₹{balance.toLocaleString("en-IN")}
+                            </h1>
 
-                        <span className="inline-block mt-4 bg-blue-100 text-blue-600 px-4 py-2 rounded-xl font-medium">
-                            Available Balance
-                        </span>
+                            <span className="inline-block mt-4 bg-blue-100 text-blue-600 px-4 py-2 rounded-xl font-medium">
+                                Available Balance
+                            </span>
+                        </div>
+
+                        {/* Right Side */}
+                        <div className="hidden md:flex w-24 h-24 rounded-3xl bg-white border border-gray-200 items-center justify-center shadow-sm">
+
+                            <Wallet size={55} className="text-blue-700" />
+
+                        </div>
+
                     </div>
-
-                    {/* Right Side */}
-                    <div className="hidden md:flex w-24 h-24 rounded-3xl bg-white border border-gray-200 items-center justify-center shadow-sm">
-
-                        <Wallet size={55} className="text-blue-700" />
-
-                    </div>
-
-                </div>
+                )}
                 <div className=" hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-100 hover:scale-[1.01]  bg-white border md:m-6 m-4 hover:shadow-lg  transition-all duration-300 border-gray-200 rounded-3xl p-8 mt-8">
 
                     <h2 className="md:text-3xl text-xl font-bold mb-8">
@@ -216,81 +221,83 @@ function ViewDetails() {
                     </div>
 
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:m-6 m-4">
+                {!isSystemUser && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:m-6 m-4">
 
-                    {/* Total Credits */}
-                    <div className="bg-green-50 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 border hover:scale-[1.01] border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
+                        {/* Total Credits */}
+                        <div className="bg-green-50 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 border hover:scale-[1.01] border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
 
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
-                            <ArrowDown size={24} className="text-green-600 sm:hidden" />
-                            <ArrowDown size={35} className="text-green-600 hidden sm:block" />
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
+                                <ArrowDown size={24} className="text-green-600 sm:hidden" />
+                                <ArrowDown size={35} className="text-green-600 hidden sm:block" />
+                            </div>
+
+                            <div>
+                                <p className="text-xl font-semibold">
+                                    Total Credits
+                                </p>
+
+                                <h3 className="text-2xl sm:text-4xl font-bold text-green-600 mt-1">
+                                    ₹{totalCredits.toLocaleString("en-IN")}
+                                </h3>
+
+                                <p className="text-gray-500 mt-1">
+                                    All time
+                                </p>
+                            </div>
+
                         </div>
 
-                        <div>
-                            <p className="text-xl font-semibold">
-                                Total Credits
-                            </p>
+                        {/* Total Debits */}
+                        <div className="bg-red-50 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-50 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
 
-                            <h3 className="text-2xl sm:text-4xl font-bold text-green-600 mt-1">
-                                ₹{totalCredits.toLocaleString("en-IN")}
-                            </h3>
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-red-100 flex items-center justify-center shrink-0">
+                                <ArrowUp size={24} className="text-red-600 sm:hidden" />
+                                <ArrowUp size={35} className="text-red-600 hidden sm:block" />
+                            </div>
 
-                            <p className="text-gray-500 mt-1">
-                                All time
-                            </p>
+                            <div>
+                                <p className="text-xl font-semibold">
+                                    Total Debits
+                                </p>
+
+                                <h3 className="text-2xl sm:text-4xl font-bold text-red-500 mt-1">
+                                    ₹{totalDebits.toLocaleString("en-IN")}
+                                </h3>
+
+                                <p className="text-gray-500 mt-1">
+                                    All time
+                                </p>
+                            </div>
+
+                        </div>
+
+                        {/* Net Balance */}
+                        <div className="bg-purple-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
+
+                            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
+                                <BarChart3 size={24} className="text-purple-600 sm:hidden" />
+                                <BarChart3 size={35} className="text-purple-600 hidden sm:block" />
+                            </div>
+
+                            <div>
+                                <p className="text-xl font-semibold">
+                                    Net Balance
+                                </p>
+
+                                <h3 className="text-2xl sm:text-4xl font-bold text-purple-600 mt-1">
+                                    ₹{balance.toLocaleString("en-IN")}
+                                </h3>
+
+                                <p className="text-gray-500 mt-1">
+                                    All time
+                                </p>
+                            </div>
+
                         </div>
 
                     </div>
-
-                    {/* Total Debits */}
-                    <div className="bg-red-50 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-50 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
-
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-red-100 flex items-center justify-center shrink-0">
-                            <ArrowUp size={24} className="text-red-600 sm:hidden" />
-                            <ArrowUp size={35} className="text-red-600 hidden sm:block" />
-                        </div>
-
-                        <div>
-                            <p className="text-xl font-semibold">
-                                Total Debits
-                            </p>
-
-                            <h3 className="text-2xl sm:text-4xl font-bold text-red-500 mt-1">
-                                ₹{totalDebits.toLocaleString("en-IN")}
-                            </h3>
-
-                            <p className="text-gray-500 mt-1">
-                                All time
-                            </p>
-                        </div>
-
-                    </div>
-
-                    {/* Net Balance */}
-                    <div className="bg-purple-50 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:scale-[1.01] border border-gray-200 rounded-3xl p-6 flex items-center gap-5 hover:shadow-lg transition-all duration-300">
-
-                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
-                            <BarChart3 size={24} className="text-purple-600 sm:hidden" />
-                            <BarChart3 size={35} className="text-purple-600 hidden sm:block" />
-                        </div>
-
-                        <div>
-                            <p className="text-xl font-semibold">
-                                Net Balance
-                            </p>
-
-                            <h3 className="text-2xl sm:text-4xl font-bold text-purple-600 mt-1">
-                                ₹{balance.toLocaleString("en-IN")}
-                            </h3>
-
-                            <p className="text-gray-500 mt-1">
-                                All time
-                            </p>
-                        </div>
-
-                    </div>
-
-                </div>
+                )}
                 <div className="md:m-6 m-4 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-5 flex items-center gap-4 hover:shadow-md  transition-all duration-300">
 
                     <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
