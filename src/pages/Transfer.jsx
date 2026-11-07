@@ -41,6 +41,9 @@ function Transfer() {
         } catch (err) {
             console.log(err);
         }
+        const filteredAccounts = accounts.filter(
+            (account) => account.user?.systemUser !== true
+        );
     }
 
 
@@ -60,6 +63,8 @@ function Transfer() {
             console.log(err)
         }
     }
+
+
 
 
 
@@ -167,11 +172,11 @@ function Transfer() {
 
             setShowSuccessCard(true);
 
-            
+
             try {
                 await fetchMyAccount();
             } catch (error) {
-                
+
             }
 
             setAmount("");
@@ -268,46 +273,48 @@ function Transfer() {
                                 {/* From Account Dropdown */}
 
                                 {showFromDropdown && (
-                                    <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg z-50 overflow-hidden">
+                                    <div className="absolute top-full left-0 mt-2 w-full max-h-64 overflow-y-auto overscroll-contain bg-white border border-gray-200 rounded-2xl shadow-lg z-50">
 
-                                        {myAccounts.map((account) => (
+                                        {myAccounts
+                                            .filter(account => account.user?.systemUser !== true)
+                                            .map((account) => (
 
-                                            <button
-                                                key={account._id}
-                                                onClick={() => {
-                                                    setSelectedFromAccount(account);
-                                                    setShowFromDropdown(false);
-                                                    fetchBalance(account._id);
-                                                }}
-                                                className="w-full px-5 py-4 text-left hover:bg-gray-100 transition"
-                                            >
+                                                <button
+                                                    key={account._id}
+                                                    onClick={() => {
+                                                        setSelectedFromAccount(account);
+                                                        setShowFromDropdown(false);
+                                                        fetchBalance(account._id);
+                                                    }}
+                                                    className="w-full px-5 py-4 text-left hover:bg-gray-100 transition"
+                                                >
 
-                                                <div className="flex items-center gap-4">
+                                                    <div className="flex items-center gap-4">
 
-                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                                                        <Wallet
-                                                            className="text-blue-600"
-                                                            size={22}
-                                                        />
+                                                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                                                            <Wallet
+                                                                className="text-blue-600"
+                                                                size={22}
+                                                            />
+                                                        </div>
+
+                                                        <div>
+
+                                                            <h3 className="font-semibold">
+                                                                Savings Account
+                                                            </h3>
+
+                                                            <p className="text-sm text-gray-500">
+                                                                *****{account._id.slice(-6).toUpperCase()}
+                                                            </p>
+
+                                                        </div>
+
                                                     </div>
 
-                                                    <div>
+                                                </button>
 
-                                                        <h3 className="font-semibold">
-                                                            Savings Account
-                                                        </h3>
-
-                                                        <p className="text-sm text-gray-500">
-                                                            *****{account._id.slice(-6).toUpperCase()}
-                                                        </p>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </button>
-
-                                        ))}
+                                            ))}
 
                                     </div>
                                 )}
